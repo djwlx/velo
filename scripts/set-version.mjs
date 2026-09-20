@@ -33,6 +33,23 @@ function workspacePatterns() {
   return patterns;
 }
 
+function setVersion(file, next) {
+  let content = readFileSync(file, 'utf8');
+  const versionField = /^(\s*"version"\s*:\s*)".*?"/m;
+
+  if (versionField.test(content)) {
+    content = content.replace(versionField, `$1"${next}"`);
+  } else {
+    content = content.replace(
+      /^(\s*)"name"\s*:\s*".*?",?\n/m,
+      (line, indent) => `${line}${indent}"version": "${next}",\n`,
+    );
+  }
+
+  writeFileSync(file, content);
+  console.log(`${file.slice(root.length + 1)} -> ${next}`);
+}
+
 const files = new Set([resolve(root, 'package.json')]);
 for (const pattern of workspacePatterns()) {
   for (const file of globSync(`${pattern}/package.json`, { cwd: root })) {
@@ -41,8 +58,5 @@ for (const pattern of workspacePatterns()) {
 }
 
 for (const file of [...files].sort()) {
-  const json = JSON.parse(readFileSync(file, 'utf8'));
-  json.version = version;
-  writeFileSync(file, `${JSON.stringify(json, null, 2)}\n`);
-  console.log(`${file.slice(root.length + 1)} -> ${version}`);
+  setVersion(file, version);
 }
