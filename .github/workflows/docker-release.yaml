@@ -98,8 +98,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ secrets.DOCKERHUB_USERNAME }}/velo
-          short-description: Velo 115 图片缓存服务
-          readme-filepath: ./apps/server/README.md
+          short-description: Velo
+          readme-filepath: ./README.md
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
