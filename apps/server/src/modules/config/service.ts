@@ -4,7 +4,6 @@ import { ErrorCode } from '@velo/shared';
 import { decrypt, encrypt } from '../../libs/crypto.js';
 import { fail, success } from '../../utils/response.js';
 import { getAppVersion } from '../../utils/version.js';
-import { checkUpdate, getCurrentVersion, updateToLatest } from '../update/service.js';
 import { deleteConfig, getConfig, setConfig } from './repository.js';
 import type { ConfigKey } from './types.js';
 import { isConfigKey, isSensitive } from './utils.js';
@@ -27,23 +26,8 @@ export const setConfigHandler: Handler = async (c) => {
   return c.json(success({ key: body.key }));
 };
 
-export const getVersionHandler: Handler = async (c) => {
-  const web = await getCurrentVersion();
-  return c.json(success({ server: getAppVersion(), web: web ?? null }));
-};
-
-export const checkUpdateHandler: Handler = async (c) => {
-  return c.json(success(await checkUpdate()));
-};
-
-export const updateWebHandler: Handler = async (c) => {
-  try {
-    const version = await updateToLatest();
-    return c.json(success({ version }));
-  } catch {
-    return c.json(fail('updateFailed', ErrorCode.ExternalServiceFailed), 502);
-  }
-};
+export const getVersionHandler: Handler = (c) =>
+  c.json(success({ version: getAppVersion() }));
 
 export const deleteConfigHandler: Handler = (c) => {
   const key = c.req.param('key') ?? '';

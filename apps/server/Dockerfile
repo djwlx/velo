@@ -3,7 +3,7 @@
 # Build the web app first and copy its output into apps/server/public, then:
 #   pnpm --filter @velo/web build
 #   mkdir -p apps/server/public && cp -R apps/web/dist/. apps/server/public/
-#   docker build -f apps/server/Dockerfile -t velo-server .
+#   docker build -f apps/server/Dockerfile -t velo .
 
 FROM node:24-alpine AS build
 

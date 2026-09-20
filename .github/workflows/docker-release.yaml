@@ -74,10 +74,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/velo-server:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/velo-server:${{ github.ref_name }}
-            ghcr.io/${{ github.repository_owner }}/velo-server:latest
-            ghcr.io/${{ github.repository_owner }}/velo-server:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/velo:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/velo:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/velo:latest
+            ghcr.io/${{ github.repository_owner }}/velo:${{ github.ref_name }}
 
       - name: Commit version bump
         if: startsWith(github.ref, 'refs/tags/v')
@@ -97,7 +97,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/velo-server
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/velo
           short-description: Velo 115 图片缓存服务
           readme-filepath: ./apps/server/README.md
 

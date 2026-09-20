@@ -26,7 +26,6 @@ export const zhCN = {
   permissionNotFound: '权限不存在',
   invalidConfigKey: '配置项无效',
   valueRequired: '配置值不能为空',
-  updateFailed: '更新失败',
   pageRange: 'page 必须为正整数，pageSize 必须在 1 到 {max} 之间',
   pageTooLarge: '页码超出范围',
   fetch115FilesFailed: '获取 115 文件列表失败',

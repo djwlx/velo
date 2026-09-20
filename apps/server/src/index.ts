@@ -19,7 +19,7 @@ app.use(loggerMiddleware());
 
 app.route('/api', api);
 
-app.use('*', await webMiddleware());
+app.use('*', webMiddleware());
 
 serve(
   {

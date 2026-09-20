@@ -1,10 +1,8 @@
 import { serveStatic } from '@hono/node-server/serve-static';
 import type { MiddlewareHandler } from 'hono';
 
-import { initWeb } from '../modules/update/service.js';
-
-export async function webMiddleware(): Promise<MiddlewareHandler> {
-  const root = await initWeb();
+export function webMiddleware(): MiddlewareHandler {
+  const root = './public';
   const serveFile = serveStatic({ root });
   const serveIndex = serveStatic({ root, path: 'index.html' });
 

@@ -1,6 +1,7 @@
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Navigation, type NavigationSection } from './Navigation';
+import { VersionBadge } from './VersionBadge';
 
 const sidebarSurfaceClassName =
   'w-72 shrink-0 border-r bg-popover text-popover-foreground ';
@@ -9,6 +10,23 @@ interface SidebarProps {
   sections?: NavigationSection[];
   mobileOpen: boolean;
   onMobileOpenChange: (open: boolean) => void;
+}
+
+function SidebarBody({
+  sections,
+  onNavigate,
+}: {
+  sections?: NavigationSection[];
+  onNavigate?: () => void;
+}) {
+  return (
+    <div className="flex h-full flex-col">
+      <Navigation sections={sections} onNavigate={onNavigate} />
+      <div className="mt-auto border-t">
+        <VersionBadge />
+      </div>
+    </div>
+  );
 }
 
 export function Sidebar({
@@ -24,9 +42,7 @@ export function Sidebar({
           'hidden h-full md:flex md:flex-col'
         )}
       >
-        <div className="flex h-full flex-col">
-          <Navigation sections={sections} />
-        </div>
+        <SidebarBody sections={sections} />
       </aside>
 
       <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
@@ -34,7 +50,7 @@ export function Sidebar({
           side="left"
           className={cn(sidebarSurfaceClassName, 'p-0 pt-8 md:hidden')}
         >
-          <Navigation
+          <SidebarBody
             sections={sections}
             onNavigate={() => onMobileOpenChange(false)}
           />
