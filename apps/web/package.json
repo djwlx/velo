@@ -1,5 +1,5 @@
 {
-  "name": "velo-web",
+  "name": "@velo/web",
   "version": "0.0.1",
   "private": true,
   "type": "module",

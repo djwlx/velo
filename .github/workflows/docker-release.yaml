@@ -37,7 +37,7 @@ jobs:
         run: node scripts/set-version.mjs "${GITHUB_REF_NAME#v}"
 
       - name: Build web
-        run: pnpm --filter velo-web build
+        run: pnpm --filter @velo/web... build
 
       - name: Copy web build into server
         run: |
@@ -45,7 +45,7 @@ jobs:
           cp -R apps/web/dist/. apps/server/public/
 
       - name: Build server
-        run: pnpm --filter velo-server... build
+        run: pnpm --filter @velo/server... build
 
       - name: Login to DockerHub
         uses: docker/login-action@v3

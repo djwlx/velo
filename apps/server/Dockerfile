@@ -1,7 +1,7 @@
 # Build context must be the repo root.
 #
 # Build the web app first and copy its output into apps/server/public, then:
-#   pnpm --filter velo-web build
+#   pnpm --filter @velo/web build
 #   mkdir -p apps/server/public && cp -R apps/web/dist/. apps/server/public/
 #   docker build -f apps/server/Dockerfile -t velo-server .
 
@@ -21,8 +21,8 @@ RUN pnpm install --frozen-lockfile
 
 # Build shared + server, then produce a self-contained deploy dir
 COPY . .
-RUN pnpm --filter velo-server... build \
-  && pnpm --filter velo-server deploy --prod --legacy /out \
+RUN pnpm --filter @velo/server... build \
+  && pnpm --filter @velo/server deploy --prod --legacy /out \
   && if [ -d apps/server/public ]; then cp -R apps/server/public /out/public; fi
 
 FROM node:24-alpine AS runtime

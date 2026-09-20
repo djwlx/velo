@@ -4,8 +4,8 @@ Turborepo monorepo for the Velo project.
 
 ## Apps
 
-- `apps/web`: Vite + React web client (`velo-web`)
-- `apps/server`: Hono + Drizzle API server (`velo-server`)
+- `apps/web`: Vite + React web client (`@velo/web`)
+- `apps/server`: Hono + Drizzle API server (`@velo/server`)
 
 ## Packages
 
@@ -32,8 +32,8 @@ pnpm dev
 Run a single app:
 
 ```sh
-pnpm dev --filter=velo-web
-pnpm dev --filter=velo-server
+pnpm dev --filter=@velo/web
+pnpm dev --filter=@velo/server
 ```
 
 ## Tasks
@@ -48,6 +48,6 @@ pnpm dev --filter=velo-server
 Copy `apps/server/.env.example` to `apps/server/.env` and set `APP_SECRET`.
 
 ```sh
-pnpm --filter=velo-server db:migrate
-pnpm --filter=velo-server dev
+pnpm --filter=@velo/server db:migrate
+pnpm --filter=@velo/server dev
 ```
