@@ -1,6 +1,6 @@
 import type { Handler } from 'hono';
 
-import { ErrorCode } from '../../../config/error-code.js';
+import { ErrorCode } from '@velo/shared';
 import type { Permission } from '../../../config/permissions.js';
 import { ADMIN_ROLE, ALL_PERMISSIONS } from '../../../config/permissions.js';
 import { db } from '../../../libs/db/index.js';

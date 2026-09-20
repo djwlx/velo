@@ -9,7 +9,11 @@ Turborepo monorepo for the Velo project.
 
 ## Packages
 
-No shared packages yet.
+- `packages/shared` (`@velo/shared`): shared runtime code and types
+
+## Environment
+
+Node version is pinned in the root `.nvmrc`.
 
 ## Development
 

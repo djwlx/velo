@@ -1,6 +1,6 @@
 import type { ErrorHandler } from 'hono';
 
-import { ErrorCode } from '../../config/error-code.js';
+import { ErrorCode } from '@velo/shared';
 import { rootLogger } from '../../libs/logger.js';
 import { fail } from '../../utils/response.js';
 

@@ -1,4 +1,4 @@
-import { ErrorCode } from './error-code';
+import { ErrorCode } from '@velo/shared';
 import { RequestError } from './error';
 
 const CODE_MESSAGES: Record<number, string> = {

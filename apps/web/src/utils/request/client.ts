@@ -1,9 +1,7 @@
 import { RequestError } from './error';
 import type { BaseResponse } from './types';
 
-export const API_BASE_URL = import.meta.env.DEV
-  ? 'http://localhost:3000/api'
-  : '/api';
+export const API_BASE_URL = '/api';
 
 const ACCESS_TOKEN_KEY = 'velo_access_token';
 

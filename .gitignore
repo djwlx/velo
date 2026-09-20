@@ -1,37 +1,57 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # Dependencies
-node_modules
+node_modules/
 .pnp
 .pnp.js
+.yarn/
+!.yarn/releases
 
-# Local env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Testing
-coverage
+# Build outputs
+dist/
+dist-ssr/
+.next/
+out/
+build/
+*.tsbuildinfo
 
 # Turbo
-.turbo
+.turbo/
 
 # Vercel
 .vercel
 
-# Build Outputs
-.next/
-out/
-build
-dist
+# Testing
+coverage/
 
+# Env
+.env
+.env.*
+!.env.example
+*.local
 
-# Debug
+# Server runtime data
+/apps/server/data/
+/apps/server/public/
+
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.idea/
+**/.vscode/*
+!**/.vscode/extensions.json
+!**/.vscode/settings.json
+!**/.vscode/launch.json
+!**/.vscode/*.code-snippets
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Misc
 .DS_Store

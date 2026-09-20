@@ -10,3 +10,7 @@ export const ErrorCode = {
   ConfigurationMissing: 60001,
   InternalError: 90001,
 } as const;
+
+export const a=3
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

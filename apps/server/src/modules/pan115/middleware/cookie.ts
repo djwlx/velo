@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono';
 
-import { ErrorCode } from '../../../config/error-code.js';
+import { ErrorCode } from '@velo/shared';
 import { fail } from '../../../utils/response.js';
 import { getConfigValue } from '../../config/service.js';
 import { ConfigKey } from '../../config/types.js';

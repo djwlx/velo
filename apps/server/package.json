@@ -2,6 +2,7 @@
   "name": "velo-server",
   "version": "0.0.14",
   "type": "module",
+  "files": ["dist", "drizzle", "drizzle.config.ts"],
   "scripts": {
     "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 tsx watch --env-file=.env src/index.ts",
     "build": "tsc",
@@ -17,6 +18,7 @@
   "dependencies": {
     "@hono/node-server": "^2.1.1",
     "@hono/structured-logger": "^1.0.0",
+    "@velo/shared": "workspace:*",
     "better-sqlite3": "^13.0.3",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",

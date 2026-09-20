@@ -1,6 +1,6 @@
 import type { Handler } from 'hono';
 
-import { ErrorCode } from '../../../config/error-code.js';
+import { ErrorCode } from '@velo/shared';
 import { Pan115Sdk } from '../../../libs/pan115/index.js';
 import { fail, success } from '../../../utils/response.js';
 import { buildContentDisposition } from '../../../utils/string.js';
