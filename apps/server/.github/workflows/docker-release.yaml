@@ -1,0 +1,91 @@
+name: Build Docker Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Fetch latest web release
+        run: |
+          rm -rf public
+          mkdir -p public
+          curl -fsSL "https://github.com/djwlx/velo-web/releases/latest/download/latest.json" -o latest.json
+          FILE=$(python3 -c "import json;print(json.load(open('latest.json'))['file'])")
+          SHA=$(python3 -c "import json;print(json.load(open('latest.json'))['sha256'])")
+          curl -fsSL "https://github.com/djwlx/velo-web/releases/latest/download/${FILE}" -o web.tar.gz
+          echo "${SHA}  web.tar.gz" | sha256sum -c -
+          tar -xzf web.tar.gz -C public
+          rm -f web.tar.gz latest.json
+
+      - name: Set package version from tag
+        run: npm pkg set version="${GITHUB_REF_NAME#v}"
+
+      - name: Commit version update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${GITHUB_REF_NAME#v}"
+          DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)
+          git push origin HEAD:"$DEFAULT_BRANCH"
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/velo-server:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/velo-server:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/velo-server:latest
+            ghcr.io/${{ github.repository_owner }}/velo-server:${{ github.ref_name }}
+
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/velo-server
+          short-description: Velo 115 图片缓存服务
+          readme-filepath: ./README.md
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          prerelease: false
