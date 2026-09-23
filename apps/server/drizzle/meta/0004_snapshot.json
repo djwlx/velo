@@ -28,22 +28,15 @@
           "name": "velo_role_permissions_role_id_velo_roles_id_fk",
           "tableFrom": "velo_role_permissions",
           "tableTo": "velo_roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["role_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "velo_role_permissions_role_id_permission_code_pk": {
-          "columns": [
-            "role_id",
-            "permission_code"
-          ],
+          "columns": ["role_id", "permission_code"],
           "name": "velo_role_permissions_role_id_permission_code_pk"
         }
       },
@@ -92,9 +85,7 @@
       "indexes": {
         "velo_roles_code_unique": {
           "name": "velo_roles_code_unique",
-          "columns": [
-            "code"
-          ],
+          "columns": ["code"],
           "isUnique": true
         }
       },
@@ -127,12 +118,8 @@
           "name": "velo_user_roles_user_id_velo_users_id_fk",
           "tableFrom": "velo_user_roles",
           "tableTo": "velo_users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -140,22 +127,15 @@
           "name": "velo_user_roles_role_id_velo_roles_id_fk",
           "tableFrom": "velo_user_roles",
           "tableTo": "velo_roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["role_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "velo_user_roles_user_id_role_id_pk": {
-          "columns": [
-            "user_id",
-            "role_id"
-          ],
+          "columns": ["user_id", "role_id"],
           "name": "velo_user_roles_user_id_role_id_pk"
         }
       },
@@ -228,9 +208,7 @@
       "indexes": {
         "velo_users_email_unique": {
           "name": "velo_users_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },
@@ -281,9 +259,7 @@
       "indexes": {
         "velo_config_key_unique": {
           "name": "velo_config_key_unique",
-          "columns": [
-            "key"
-          ],
+          "columns": ["key"],
           "isUnique": true
         }
       },
@@ -327,9 +303,7 @@
       "indexes": {
         "velo_files_115_pc_code_unique": {
           "name": "velo_files_115_pc_code_unique",
-          "columns": [
-            "pc_code"
-          ],
+          "columns": ["pc_code"],
           "isUnique": true
         }
       },

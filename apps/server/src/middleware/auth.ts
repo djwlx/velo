@@ -1,6 +1,6 @@
+import { ErrorCode } from '@velo/shared';
 import type { MiddlewareHandler } from 'hono';
 
-import { ErrorCode } from '@velo/shared';
 import type { Permission } from '../config/permissions.js';
 import { PUBLIC_API_PATHS } from '../config/public-routes.js';
 import { verifyAccessToken } from '../libs/jwt.js';

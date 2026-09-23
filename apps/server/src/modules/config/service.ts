@@ -1,6 +1,6 @@
+import { ErrorCode } from '@velo/shared';
 import type { Handler } from 'hono';
 
-import { ErrorCode } from '@velo/shared';
 import { decrypt, encrypt } from '../../libs/crypto.js';
 import { fail, success } from '../../utils/response.js';
 import { getAppVersion } from '../../utils/version.js';
@@ -26,8 +26,7 @@ export const setConfigHandler: Handler = async (c) => {
   return c.json(success({ key: body.key }));
 };
 
-export const getVersionHandler: Handler = (c) =>
-  c.json(success({ version: getAppVersion() }));
+export const getVersionHandler: Handler = (c) => c.json(success({ version: getAppVersion() }));
 
 export const deleteConfigHandler: Handler = (c) => {
   const key = c.req.param('key') ?? '';

@@ -21,7 +21,9 @@ export function FormSubmit({
       disabled={disabled || formState.isSubmitting}
       {...props}
     >
-      {formState.isSubmitting ? (pendingLabel ?? '保存中…') : (children ?? '保存')}
+      {formState.isSubmitting
+        ? (pendingLabel ?? '保存中…')
+        : (children ?? '保存')}
     </Button>
   );
 }

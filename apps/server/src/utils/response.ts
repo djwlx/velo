@@ -1,4 +1,5 @@
 import type { ErrorCode } from '@velo/shared';
+
 import type { MessageKey, MessageParams } from '../i18n/index.js';
 import { t } from '../i18n/index.js';
 

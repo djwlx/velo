@@ -8,7 +8,10 @@ export function escapeHtml(value: string): string {
 }
 
 export function sanitizeFilename(filename: string): string {
-  return filename.replace(/[^\x20-\x21\x23-\x7e]/g, '_').trim().slice(0, 255);
+  return filename
+    .replace(/[^\x20-\x21\x23-\x7e]/g, '_')
+    .trim()
+    .slice(0, 255);
 }
 
 export function buildContentDisposition(

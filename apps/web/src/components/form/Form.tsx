@@ -7,8 +7,10 @@ import {
 
 import { cn } from '@/lib/utils';
 
-export interface FormProps<TFieldValues extends FieldValues>
-  extends Omit<React.ComponentProps<'form'>, 'onSubmit'> {
+export interface FormProps<TFieldValues extends FieldValues> extends Omit<
+  React.ComponentProps<'form'>,
+  'onSubmit'
+> {
   form: UseFormReturn<TFieldValues>;
   onSubmit: (values: TFieldValues) => void | Promise<void>;
 }

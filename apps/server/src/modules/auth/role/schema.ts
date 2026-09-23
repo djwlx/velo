@@ -13,8 +13,12 @@ export const roles = sqliteTable('velo_roles', {
 export const userRoles = sqliteTable(
   'velo_user_roles',
   {
-    userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-    roleId: integer('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    roleId: integer('role_id')
+      .notNull()
+      .references(() => roles.id, { onDelete: 'cascade' }),
   },
   (table) => [primaryKey({ columns: [table.userId, table.roleId] })],
 );
@@ -22,7 +26,9 @@ export const userRoles = sqliteTable(
 export const rolePermissions = sqliteTable(
   'velo_role_permissions',
   {
-    roleId: integer('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
+    roleId: integer('role_id')
+      .notNull()
+      .references(() => roles.id, { onDelete: 'cascade' }),
     permissionCode: text('permission_code').notNull(),
   },
   (table) => [primaryKey({ columns: [table.roleId, table.permissionCode] })],

@@ -189,10 +189,13 @@
 }
 
 [data-slot='toast'][data-expanded] {
-  transform: translateX(var(--toast-swipe-movement-x)) translateY(var(--offset-y));
+  transform: translateX(var(--toast-swipe-movement-x))
+    translateY(var(--offset-y));
 }
 
 [data-slot='toast'][data-starting-style],
-[data-slot='toast'][data-ending-style]:not([data-limited]):not([data-swipe-direction]) {
+[data-slot='toast'][data-ending-style]:not([data-limited]):not(
+    [data-swipe-direction]
+  ) {
   transform: translateY(-150%);
 }

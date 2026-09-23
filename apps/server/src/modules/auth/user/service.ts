@@ -1,8 +1,8 @@
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
+import { ErrorCode } from '@velo/shared';
 import type { Handler } from 'hono';
 
-import { ErrorCode } from '@velo/shared';
 import { ADMIN_ROLE } from '../../../config/permissions.js';
 import type { MessageKey } from '../../../i18n/index.js';
 import { db } from '../../../libs/db/index.js';

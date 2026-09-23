@@ -20,9 +20,7 @@ export function webMiddleware(): MiddlewareHandler {
     const contentType = response.headers.get('content-type') ?? '';
     response.headers.set(
       'Cache-Control',
-      contentType.includes('text/html')
-        ? 'no-cache'
-        : 'public, max-age=31536000, immutable'
+      contentType.includes('text/html') ? 'no-cache' : 'public, max-age=31536000, immutable',
     );
     c.res = response;
   };

@@ -7,7 +7,9 @@ import { Layout } from './apps/layout';
 const AuthPage = lazy(() =>
   import('./apps/auth').then((m) => ({ default: m.AuthPage }))
 );
-const Home = lazy(() => import('./apps/home').then((m) => ({ default: m.Home })));
+const Home = lazy(() =>
+  import('./apps/home').then((m) => ({ default: m.Home }))
+);
 const FileList115 = lazy(() =>
   import('./apps/file-list-115').then((m) => ({ default: m.FileList115 }))
 );

@@ -18,8 +18,11 @@ interface UserState {
 
 const readStoredPermissions = (): string[] => {
   try {
-    const value: unknown = JSON.parse(localStorage.getItem(PERMISSIONS_KEY) ?? '[]');
-    return Array.isArray(value) && value.every((permission) => typeof permission === 'string')
+    const value: unknown = JSON.parse(
+      localStorage.getItem(PERMISSIONS_KEY) ?? '[]'
+    );
+    return Array.isArray(value) &&
+      value.every((permission) => typeof permission === 'string')
       ? value
       : [];
   } catch {
@@ -40,14 +43,22 @@ export const useUser = create<UserState>((set) => ({
     localStorage.setItem(ACCESS_TOKEN_KEY, response.data.token);
     const currentUser = await getCurrentUser();
     savePermissions(currentUser.data.permissions);
-    set({ user: currentUser.data.user, permissions: currentUser.data.permissions, initialized: true });
+    set({
+      user: currentUser.data.user,
+      permissions: currentUser.data.permissions,
+      initialized: true,
+    });
   },
   signUp: async (email, password) => {
     const response = await register(email, password);
     localStorage.setItem(ACCESS_TOKEN_KEY, response.data.token);
     const currentUser = await getCurrentUser();
     savePermissions(currentUser.data.permissions);
-    set({ user: currentUser.data.user, permissions: currentUser.data.permissions, initialized: true });
+    set({
+      user: currentUser.data.user,
+      permissions: currentUser.data.permissions,
+      initialized: true,
+    });
   },
   refresh: async () => {
     if (!localStorage.getItem(ACCESS_TOKEN_KEY)) {
@@ -58,7 +69,11 @@ export const useUser = create<UserState>((set) => ({
     try {
       const response = await getCurrentUser();
       savePermissions(response.data.permissions);
-      set({ user: response.data.user, permissions: response.data.permissions, initialized: true });
+      set({
+        user: response.data.user,
+        permissions: response.data.permissions,
+        initialized: true,
+      });
     } catch {
       localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(PERMISSIONS_KEY);

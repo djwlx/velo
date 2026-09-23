@@ -46,9 +46,7 @@
       "indexes": {
         "velo_config_key_unique": {
           "name": "velo_config_key_unique",
-          "columns": [
-            "key"
-          ],
+          "columns": ["key"],
           "isUnique": true
         }
       },
@@ -92,9 +90,7 @@
       "indexes": {
         "velo_files_115_pc_code_unique": {
           "name": "velo_files_115_pc_code_unique",
-          "columns": [
-            "pc_code"
-          ],
+          "columns": ["pc_code"],
           "isUnique": true
         }
       },

@@ -31,7 +31,11 @@ export async function send<T>(
     result = await response.json();
   } catch {
     if (!response.ok) {
-      throw new RequestError(`HTTP ${response.status}`, 'http', response.status);
+      throw new RequestError(
+        `HTTP ${response.status}`,
+        'http',
+        response.status
+      );
     }
     throw new RequestError('Invalid response', 'http', response.status);
   }
