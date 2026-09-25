@@ -19,4 +19,5 @@ export interface ProTableProps<T = unknown> {
   rowKey?: string;
   footer?: ReactNode;
   isLoading?: boolean;
+  emptyText?: ReactNode;
 }

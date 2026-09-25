@@ -21,6 +21,7 @@ export function ProTable<T>(props: ProTableProps<T>) {
     rowKey,
     footer,
     isLoading = false,
+    emptyText = '暂无数据',
   } = props;
 
   return (
@@ -49,7 +50,18 @@ export function ProTable<T>(props: ProTableProps<T>) {
               </TableCell>
             </TableRow>
           ) : null}
+          {!isLoading && items.length === 0 ? (
+            <TableRow className="hover:bg-transparent">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-muted-foreground"
+              >
+                {emptyText}
+              </TableCell>
+            </TableRow>
+          ) : null}
           {!isLoading &&
+            items.length > 0 &&
             items.map((item, index) => {
               const dataRowKey: string | number = rowKey
                 ? (item as Record<string, any>)[rowKey]

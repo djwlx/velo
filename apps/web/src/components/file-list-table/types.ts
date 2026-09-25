@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { ProTableColumn, ProTableProps } from '../pro-table';
 import type { FileTableBreadcrumbItem } from './components/TableHeader';
 
@@ -24,6 +25,7 @@ export interface FileListTableProps<T> extends Pick<
     params: FileListTableLoadParams
   ) => Promise<FileListTableLoadResult<T>>;
   pageSize?: number;
+  emptyText?: ReactNode;
 }
 
 export interface FileListTableColumn<T> extends ProTableColumn<T> {}
