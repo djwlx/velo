@@ -23,6 +23,7 @@ export const zhCN = {
   invalidPermissionCodes: '权限编码无效',
   roleCodeExists: '角色标识已存在',
   cannotDeleteAdminRole: '不能删除管理员角色',
+  cannotModifyAdminRole: '不能修改管理员角色',
   permissionNotFound: '权限不存在',
   invalidConfigKey: '配置项无效',
   valueRequired: '配置值不能为空',

@@ -21,6 +21,7 @@ import { listPermissions } from '@/services/permission';
 import { deleteRole, listRoles } from '@/services/role';
 import type { RoleDetail } from '@/services/role/types';
 import { RoleFormDialog } from './components/RoleFormDialog';
+import { ADMIN_ROLE } from './types';
 
 export function RoleManagement() {
   const { data, loading, refetch } = useRequestQuery(listRoles);
@@ -94,26 +95,31 @@ export function RoleManagement() {
       key: 'actions',
       title: '操作',
       className: 'w-24',
-      render: (_value, item) => (
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label="编辑"
-            onClick={() => openEdit(item)}
-          >
-            <Pencil />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label="删除"
-            onClick={() => setDeleting(item)}
-          >
-            <Trash2 />
-          </Button>
-        </div>
-      ),
+      render: (_value, item) =>
+        item.code === ADMIN_ROLE ? (
+          <div className="flex items-center gap-1">
+            <Badge variant="outline">内置</Badge>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="编辑"
+              onClick={() => openEdit(item)}
+            >
+              <Pencil />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="删除"
+              onClick={() => setDeleting(item)}
+            >
+              <Trash2 />
+            </Button>
+          </div>
+        ),
     },
   ];
 

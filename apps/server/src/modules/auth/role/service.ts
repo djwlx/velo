@@ -52,6 +52,9 @@ const toRoleDetail = (role: Role, permissionCodes: string[], userCount: number) 
   updatedAt: role.updatedAt,
 });
 
+const resolvePermissions = (role: Role, storedCodes: string[]): string[] =>
+  role.code === ADMIN_ROLE ? [...ALL_PERMISSIONS] : storedCodes;
+
 export const listRolesHandler: Handler = (c) => {
   const permissionsByRole = new Map<number, string[]>();
   for (const { roleId, permissionCode } of listRolePermissions()) {
@@ -64,7 +67,11 @@ export const listRolesHandler: Handler = (c) => {
   return c.json(
     success({
       list: listRoles().map((role) =>
-        toRoleDetail(role, permissionsByRole.get(role.id) ?? [], userCounts.get(role.id) ?? 0),
+        toRoleDetail(
+          role,
+          resolvePermissions(role, permissionsByRole.get(role.id) ?? []),
+          userCounts.get(role.id) ?? 0,
+        ),
       ),
     }),
   );
@@ -76,7 +83,13 @@ export const getRoleHandler: Handler = (c) => {
   const role = getRoleById(roleId);
   if (!role) return c.json(fail('roleNotFound', ErrorCode.ResourceNotFound), 404);
   return c.json(
-    success({ role: toRoleDetail(role, getRolePermissions(roleId), countRoleUsers(roleId)) }),
+    success({
+      role: toRoleDetail(
+        role,
+        resolvePermissions(role, getRolePermissions(roleId)),
+        countRoleUsers(roleId),
+      ),
+    }),
   );
 };
 
@@ -130,6 +143,9 @@ export const updateRoleHandler: Handler = async (c) => {
   if (!roleId) return c.json(fail('invalidRoleId', ErrorCode.ValidationFailed), 400);
   const role = getRoleById(roleId);
   if (!role) return c.json(fail('roleNotFound', ErrorCode.ResourceNotFound), 404);
+  if (role.code === ADMIN_ROLE) {
+    return c.json(fail('cannotModifyAdminRole', ErrorCode.ValidationFailed), 400);
+  }
 
   let body: { name?: unknown; permissionCodes?: unknown };
   try {

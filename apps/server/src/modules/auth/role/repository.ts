@@ -30,6 +30,12 @@ export const grantPermissions = (
   roleId: number,
   permissionCodes: readonly Permission[],
 ): void => {
+  const isAdmin = client
+    .select({ code: roles.code })
+    .from(roles)
+    .where(and(eq(roles.id, roleId), eq(roles.code, ADMIN_ROLE)))
+    .get();
+  if (isAdmin) return;
   for (const permissionCode of permissionCodes) {
     client.insert(rolePermissions).values({ roleId, permissionCode }).run();
   }

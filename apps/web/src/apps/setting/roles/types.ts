@@ -1,5 +1,7 @@
 import { z } from 'zod/mini';
 
+export const ADMIN_ROLE = 'admin';
+
 export const roleFormSchema = z.object({
   code: z
     .string()

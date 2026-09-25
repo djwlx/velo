@@ -22,7 +22,7 @@ import type { PermissionInfo } from '@/services/permission/types';
 import { createRole, updateRole } from '@/services/role';
 import type { RoleDetail, UpdateRolePayload } from '@/services/role/types';
 
-import { roleFormSchema, type RoleFormValues } from '../types';
+import { roleFormSchema, ADMIN_ROLE, type RoleFormValues } from '../types';
 
 interface RoleFormDialogProps {
   open: boolean;
@@ -40,6 +40,7 @@ export function RoleFormDialog({
   onSaved,
 }: RoleFormDialogProps) {
   const isEdit = role !== null;
+  const isAdmin = role?.code === ADMIN_ROLE;
 
   const form = useForm<RoleFormValues>({
     resolver: zodResolver(roleFormSchema),
@@ -51,9 +52,9 @@ export function RoleFormDialog({
     form.reset({
       code: role?.code ?? '',
       name: role?.name ?? '',
-      permissionCodes: role?.permissionCodes ?? [],
+      permissionCodes: isAdmin ? permissions.map((item) => item.code) : (role?.permissionCodes ?? []),
     });
-  }, [open, role, form]);
+  }, [open, role, permissions, isAdmin, form]);
 
   const onSubmit = async (values: RoleFormValues) => {
     if (isEdit && role) {
@@ -97,6 +98,7 @@ export function RoleFormDialog({
             name="name"
             label="角色名称"
             autoComplete="off"
+            disabled={isAdmin}
           />
           <FormCheckboxGroup
             control={form.control}
@@ -107,6 +109,7 @@ export function RoleFormDialog({
               value: permission.code,
               label: permission.name,
               description: permission.code,
+              disabled: isAdmin,
             }))}
           />
           <DialogFooter>
