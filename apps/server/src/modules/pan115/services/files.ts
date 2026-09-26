@@ -68,6 +68,12 @@ export const getFiles: Handler<Pan115Env> = async (c) => {
   }
 };
 
+const isInlinePreviewable = (mime: string): boolean =>
+  mime.startsWith('image/') ||
+  mime.startsWith('video/') ||
+  mime.startsWith('audio/') ||
+  mime === 'application/pdf';
+
 export const getFile: Handler<Pan115Env> = async (c) => {
   const pickCode = c.req.param('pickCode')?.trim() ?? '';
   if (!pickCode) {
@@ -77,25 +83,29 @@ export const getFile: Handler<Pan115Env> = async (c) => {
   try {
     const sdk = new Pan115Sdk(c.get('cookie115'), c.req.header('User-Agent'));
     const fileInfo = await sdk.getFile(pickCode);
-    const response = await fetch(fileInfo.url, {
-      headers: {
-        'User-Agent': sdk.userAgent,
-      },
-    });
+    const range = c.req.header('Range');
+    const headers: Record<string, string> = { 'User-Agent': sdk.userAgent };
+    if (range) headers.Range = range;
+    const response = await fetch(fileInfo.url, { headers });
 
     if (!response.ok || !response.body) {
       return c.json(fail('download115FileFailed', ErrorCode.ExternalServiceFailed), 502);
     }
 
-    const dispositionType = fileInfo.mime.startsWith('image/') ? 'inline' : 'attachment';
+    const dispositionType = isInlinePreviewable(fileInfo.mime) ? 'inline' : 'attachment';
+    const upstreamLength = response.headers.get('Content-Length') ?? String(fileInfo.file_size);
 
     return new Response(response.body, {
-      status: 200,
+      status: response.status,
       headers: {
+        'Accept-Ranges': response.headers.get('Accept-Ranges') ?? 'bytes',
         'Cache-Control': 'private, no-store',
         'Content-Type': fileInfo.mime,
-        'Content-Length': response.headers.get('Content-Length') ?? fileInfo.file_size,
+        'Content-Length': upstreamLength,
         'Content-Disposition': buildContentDisposition(fileInfo.file_name, dispositionType),
+        ...(response.status === 206 && response.headers.get('Content-Range')
+          ? { 'Content-Range': response.headers.get('Content-Range')! }
+          : {}),
       },
     });
   } catch (error) {

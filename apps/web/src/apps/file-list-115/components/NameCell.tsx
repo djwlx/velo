@@ -110,6 +110,13 @@ const DOCUMENT_EXTENSIONS = new Set([
   'pages',
 ]);
 
+const PREVIEW_EXTENSIONS = new Set([
+  ...IMAGE_EXTENSIONS,
+  ...VIDEO_EXTENSIONS,
+  ...AUDIO_EXTENSIONS,
+  'pdf',
+]);
+
 function FileTypeIcon({
   name,
   className,
@@ -154,7 +161,7 @@ export function NameCell({ item, onOpen, onDownload, onPreview }: NameCellProps)
     );
   }
 
-  const isImage = IMAGE_EXTENSIONS.has(
+  const isPreviewable = PREVIEW_EXTENSIONS.has(
     item.name.split('.').pop()?.toLowerCase() ?? ''
   );
 
@@ -176,7 +183,7 @@ export function NameCell({ item, onOpen, onDownload, onPreview }: NameCellProps)
     );
   }
 
-  const onClick = isImage && onPreview ? onPreview : onDownload;
+  const onClick = isPreviewable && onPreview ? onPreview : onDownload;
 
   return (
     <button
