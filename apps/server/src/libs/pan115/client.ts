@@ -72,7 +72,7 @@ export class Pan115Sdk {
         file_name: entry.file_name,
         file_size: entry.file_size,
         url: entry.url.url,
-        mime: mime.lookup(entry.file_name) || 'image/jpeg',
+        mime: mime.lookup(entry.file_name) || 'application/octet-stream',
       };
     } catch {
       throw new Error('115 download metadata is invalid');

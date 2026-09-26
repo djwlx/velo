@@ -87,13 +87,15 @@ export const getFile: Handler<Pan115Env> = async (c) => {
       return c.json(fail('download115FileFailed', ErrorCode.ExternalServiceFailed), 502);
     }
 
+    const dispositionType = fileInfo.mime.startsWith('image/') ? 'inline' : 'attachment';
+
     return new Response(response.body, {
       status: 200,
       headers: {
         'Cache-Control': 'private, no-store',
         'Content-Type': fileInfo.mime,
         'Content-Length': response.headers.get('Content-Length') ?? fileInfo.file_size,
-        'Content-Disposition': buildContentDisposition(fileInfo.file_name, 'attachment'),
+        'Content-Disposition': buildContentDisposition(fileInfo.file_name, dispositionType),
       },
     });
   } catch (error) {

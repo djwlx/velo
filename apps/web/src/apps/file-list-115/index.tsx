@@ -18,6 +18,7 @@ import {
   PAGE_SIZE,
   ROOT_ENTRY,
   downloadFile,
+  previewFile,
   toBreadcrumbs,
 } from './utils';
 
@@ -72,6 +73,9 @@ export function FileList115() {
           onOpen={() => navigate(item.cid ?? ROOT_ENTRY.cid)}
           onDownload={() => {
             if (item.pickCode) downloadFile(item.pickCode, item.name);
+          }}
+          onPreview={() => {
+            if (item.pickCode) previewFile(item.pickCode);
           }}
         />
       ),

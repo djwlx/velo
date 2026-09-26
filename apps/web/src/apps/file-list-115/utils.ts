@@ -19,14 +19,22 @@ export const toBreadcrumbs = (
     .map((entry) => ({ cid: entry.cid, name: entry.name })),
 ];
 
-export const downloadFile = (pickCode: string, name: string) => {
+const buildFileUrl = (pickCode: string): string => {
   const url = new URL(getFileDownloadUrl(pickCode), window.location.origin);
   const token = localStorage.getItem(ACCESS_TOKEN_KEY);
   if (token) url.searchParams.set('token', token);
+  return url.toString();
+};
+
+export const downloadFile = (pickCode: string, name: string) => {
   const anchor = document.createElement('a');
-  anchor.href = url.toString();
+  anchor.href = buildFileUrl(pickCode);
   anchor.download = name;
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
+};
+
+export const previewFile = (pickCode: string): void => {
+  window.open(buildFileUrl(pickCode), '_blank', 'noopener');
 };

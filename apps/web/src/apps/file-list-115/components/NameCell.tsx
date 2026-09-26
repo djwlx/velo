@@ -17,6 +17,7 @@ export interface NameCellProps {
   item: ItemsType;
   onOpen: () => void;
   onDownload: () => void;
+  onPreview?: () => void;
 }
 
 const IMAGE_EXTENSIONS = new Set([
@@ -137,7 +138,7 @@ function FileTypeIcon({
   return <File className={className} />;
 }
 
-export function NameCell({ item, onOpen, onDownload }: NameCellProps) {
+export function NameCell({ item, onOpen, onDownload, onPreview }: NameCellProps) {
   const label = <TruncatedText className="max-w-[50vw]" text={item.name} />;
 
   if (item.isDir) {
@@ -152,6 +153,10 @@ export function NameCell({ item, onOpen, onDownload }: NameCellProps) {
       </button>
     );
   }
+
+  const isImage = IMAGE_EXTENSIONS.has(
+    item.name.split('.').pop()?.toLowerCase() ?? ''
+  );
 
   const content = (
     <>
@@ -171,11 +176,13 @@ export function NameCell({ item, onOpen, onDownload }: NameCellProps) {
     );
   }
 
+  const onClick = isImage && onPreview ? onPreview : onDownload;
+
   return (
     <button
       type="button"
       className="inline-flex max-w-full items-center gap-1.5 text-left hover:underline"
-      onClick={onDownload}
+      onClick={onClick}
     >
       {content}
     </button>
