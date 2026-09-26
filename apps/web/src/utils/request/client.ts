@@ -3,7 +3,7 @@ import type { BaseResponse } from './types';
 
 export const API_BASE_URL = '/api';
 
-const ACCESS_TOKEN_KEY = 'velo_access_token';
+export const ACCESS_TOKEN_KEY = 'velo_access_token';
 
 export async function send<T>(
   url: string,

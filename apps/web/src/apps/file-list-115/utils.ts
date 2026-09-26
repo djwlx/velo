@@ -1,4 +1,8 @@
-import { getFileDownloadUrl, type Pan115PathItem } from '@/services/pan115';
+import {
+  getFileDownloadUrl,
+  type Pan115PathItem,
+} from '@/services/pan115';
+import { ACCESS_TOKEN_KEY } from '@/utils/request';
 import type { BreadcrumbEntry } from './types';
 
 export const PAGE_SIZE = 50;
@@ -16,8 +20,11 @@ export const toBreadcrumbs = (
 ];
 
 export const downloadFile = (pickCode: string, name: string) => {
+  const url = new URL(getFileDownloadUrl(pickCode), window.location.origin);
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  if (token) url.searchParams.set('token', token);
   const anchor = document.createElement('a');
-  anchor.href = getFileDownloadUrl(pickCode);
+  anchor.href = url.toString();
   anchor.download = name;
   document.body.appendChild(anchor);
   anchor.click();
