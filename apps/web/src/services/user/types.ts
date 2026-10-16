@@ -12,7 +12,7 @@ export interface AuthResponse {
 
 export interface MeResponse {
   user: UserProfile;
-  roles: string[];
+  roles: UserRole[];
   permissions: string[];
 }
 

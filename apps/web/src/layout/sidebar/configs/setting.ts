@@ -8,6 +8,7 @@ export const settingSidebarConfig: SidebarSection[] = [
   },
   {
     title: '管理员设置',
+    roles: ['admin'],
     items: [
       { href: '/setting/users', label: '用户管理', icon: Users },
       { href: '/setting/roles', label: '角色管理', icon: ShieldCheck },

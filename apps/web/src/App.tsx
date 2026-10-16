@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Route, Switch } from 'wouter';
 import { Layout } from './layout';
+import { withAuth } from './components/permission';
 import { Loading } from './components/states/Loading';
 import { NotFound } from './components/states/NotFound';
 
@@ -27,6 +28,16 @@ const UserManagement = lazy(() =>
   import('./apps/setting/users').then((m) => ({ default: m.UserManagement }))
 );
 
+const FileList115Page = withAuth(FileList115, { permission: 'module:115' });
+const UserManagementPage = withAuth(UserManagement, {
+  permission: 'module:auth',
+});
+const RoleManagementPage = withAuth(RoleManagement, {
+  permission: 'module:auth',
+});
+const UserInfoPage = withAuth(UserInfo);
+const SettingPage = withAuth(Setting);
+
 function App() {
   return (
     <Layout>
@@ -35,11 +46,11 @@ function App() {
           <Route path="/login" component={AuthPage} />
           <Route path="/register" component={AuthPage} />
           <Route path="/" component={Home} />
-          <Route path="/115" component={FileList115} />
-          <Route path="/setting/users" component={UserManagement} />
-          <Route path="/setting/roles" component={RoleManagement} />
-          <Route path="/setting/me" component={UserInfo} />
-          <Route path="/setting" component={Setting} />
+          <Route path="/115" component={FileList115Page} />
+          <Route path="/setting/users" component={UserManagementPage} />
+          <Route path="/setting/roles" component={RoleManagementPage} />
+          <Route path="/setting/me" component={UserInfoPage} />
+          <Route path="/setting" component={SettingPage} />
           <Route component={NotFound} />
         </Switch>
       </Suspense>

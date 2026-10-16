@@ -4,18 +4,31 @@ import type { SidebarProps, SidebarSection } from './types';
 import { useMemo } from 'react';
 import { settingSidebarConfig } from './configs/setting';
 import { VersionBadge } from './VersionBadge';
+import { useUser } from '@/stores/user';
 
 export function Sidebar(props: SidebarProps) {
   const { sections: propSections, onNavigate } = props;
   const [location] = useLocation();
+  const roles = useUser((state) => state.roles);
 
   const sections = useMemo<SidebarSection[]>(() => {
+    let useconfig;
     if (location.startsWith('/setting')) {
-      return settingSidebarConfig;
+      useconfig = settingSidebarConfig;
     } else {
-      return propSections ?? [];
+      useconfig = propSections ?? [];
     }
-  }, [propSections, location]);
+
+    return useconfig.filter((item) => {
+      if (item.roles) {
+        return item.roles.some((role) =>
+          roles.some((granted) => granted.code === role)
+        );
+      }
+
+      return true;
+    });
+  }, [propSections, location, roles]);
 
   return (
     <nav aria-label="主导航" className="flex flex-col gap-4 p-3">

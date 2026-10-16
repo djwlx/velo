@@ -8,6 +8,7 @@ export interface SidebarSectionItem {
 
 export interface SidebarSection {
   title?: string;
+  roles?: string[];
   items: SidebarSectionItem[];
 }
 

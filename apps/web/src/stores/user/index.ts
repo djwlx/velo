@@ -1,12 +1,12 @@
 import { getCurrentUser, login, register } from '@/services/user';
-import type { UserProfile } from '@/services/user/types';
+import type { UserProfile, UserRole } from '@/services/user/types';
 import { create } from 'zustand';
 
 const ACCESS_TOKEN_KEY = 'velo_access_token';
-const PERMISSIONS_KEY = 'velo_permissions';
 
 interface UserState {
   user: UserProfile | null;
+  roles: UserRole[];
   permissions: string[];
   initialized: boolean;
   signIn: (email: string, password: string) => Promise<void>;
@@ -16,35 +16,18 @@ interface UserState {
   signOut: () => void;
 }
 
-const readStoredPermissions = (): string[] => {
-  try {
-    const value: unknown = JSON.parse(
-      localStorage.getItem(PERMISSIONS_KEY) ?? '[]'
-    );
-    return Array.isArray(value) &&
-      value.every((permission) => typeof permission === 'string')
-      ? value
-      : [];
-  } catch {
-    return [];
-  }
-};
-
-const savePermissions = (permissions: string[]) => {
-  localStorage.setItem(PERMISSIONS_KEY, JSON.stringify(permissions));
-};
-
 export const useUser = create<UserState>((set) => ({
   user: null,
-  permissions: readStoredPermissions(),
+  roles: [],
+  permissions: [],
   initialized: false,
   signIn: async (email, password) => {
     const response = await login(email, password);
     localStorage.setItem(ACCESS_TOKEN_KEY, response.data.token);
     const currentUser = await getCurrentUser();
-    savePermissions(currentUser.data.permissions);
     set({
       user: currentUser.data.user,
+      roles: currentUser.data.roles,
       permissions: currentUser.data.permissions,
       initialized: true,
     });
@@ -53,37 +36,34 @@ export const useUser = create<UserState>((set) => ({
     const response = await register(email, password);
     localStorage.setItem(ACCESS_TOKEN_KEY, response.data.token);
     const currentUser = await getCurrentUser();
-    savePermissions(currentUser.data.permissions);
     set({
       user: currentUser.data.user,
+      roles: currentUser.data.roles,
       permissions: currentUser.data.permissions,
       initialized: true,
     });
   },
   refresh: async () => {
     if (!localStorage.getItem(ACCESS_TOKEN_KEY)) {
-      localStorage.removeItem(PERMISSIONS_KEY);
-      set({ user: null, permissions: [], initialized: true });
+      set({ user: null, roles: [], permissions: [], initialized: true });
       return;
     }
     try {
       const response = await getCurrentUser();
-      savePermissions(response.data.permissions);
       set({
         user: response.data.user,
+        roles: response.data.roles,
         permissions: response.data.permissions,
         initialized: true,
       });
     } catch {
       localStorage.removeItem(ACCESS_TOKEN_KEY);
-      localStorage.removeItem(PERMISSIONS_KEY);
-      set({ user: null, permissions: [], initialized: true });
+      set({ user: null, roles: [], permissions: [], initialized: true });
     }
   },
   setUser: (user) => set({ user }),
   signOut: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(PERMISSIONS_KEY);
-    set({ user: null, permissions: [], initialized: true });
+    set({ user: null, roles: [], permissions: [], initialized: true });
   },
 }));
