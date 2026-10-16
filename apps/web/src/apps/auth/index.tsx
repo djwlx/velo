@@ -53,7 +53,7 @@ export function AuthPage() {
     <main className="flex min-h-dvh items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>{isRegister ? '注册' : '登录r'}</CardTitle>
+          <CardTitle>{isRegister ? '注册' : '登录'}</CardTitle>
         </CardHeader>
         <CardContent>
           <Form form={form} onSubmit={onSubmit}>
