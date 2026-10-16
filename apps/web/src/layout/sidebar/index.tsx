@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import type { SidebarProps, SidebarSection } from './types';
 import { useMemo } from 'react';
 import { settingSidebarConfig } from './configs/setting';
+import { VersionBadge } from './VersionBadge';
 
 export function Sidebar(props: SidebarProps) {
   const { sections: propSections, onNavigate } = props;
@@ -52,6 +53,7 @@ export function Sidebar(props: SidebarProps) {
           })}
         </div>
       ))}
+      <VersionBadge />
     </nav>
   );
 }

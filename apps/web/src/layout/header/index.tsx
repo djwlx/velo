@@ -6,17 +6,17 @@ import { useUser } from '@/stores/user';
 import { SidebarSheet } from './SidebarSheet';
 import { useState } from 'react';
 
-interface HeaderProps {
-  onMenuClick?: () => void;
-}
-
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header() {
   const signOut = useUser((state) => state.signOut);
   const user = useUser((state) => state.user);
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const showSidebar = location.startsWith('/setting');
+
+  if (location.startsWith('/login') || location.startsWith('/register')) {
+    return null;
+  }
 
   return (
     <header className="flex h-14 shrink-0 items-center border-b px-4">

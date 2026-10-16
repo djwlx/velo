@@ -33,7 +33,7 @@ export function Home() {
         {entries.map((entry) => (
           <Card
             key={entry.href}
-            className="h-full transition-colors hover:bg-muted/50"
+            className="h-full cursor-pointer transition-colors hover:bg-muted/50"
             onClick={() => {
               if (entry.external) {
                 window.location.assign(entry.href);
