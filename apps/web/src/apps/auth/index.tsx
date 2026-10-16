@@ -54,10 +54,7 @@ export function AuthPage() {
     <main className="flex min-h-dvh items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>{isRegister ? '注册 Velo' : '登录 Velo'}</CardTitle>
-          <CardDescription>
-            {isRegister ? '创建账号后即可开始使用。' : '登录后继续使用 Velo。'}
-          </CardDescription>
+          <CardTitle>{isRegister ? '注册' : '登录r'}</CardTitle>
         </CardHeader>
         <CardContent>
           <Form form={form} onSubmit={onSubmit}>
