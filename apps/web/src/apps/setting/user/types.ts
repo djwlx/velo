@@ -13,7 +13,10 @@ export const userSchema = z.object({
     z.trim(),
     z.maxLength(2048, '头像地址不能超过 2048 个字符'),
     z.refine(
-      (value) => value === '' || /^https?:\/\//.test(value),
+      (value) =>
+        value === '' ||
+        /^https?:\/\//.test(value) ||
+        /^\/api\/files\/\d+$/.test(value),
       '请输入有效的头像链接'
     )
   ),

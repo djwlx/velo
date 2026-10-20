@@ -2,6 +2,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 import { ProTable, type ProTableColumn } from '@/components/pro-table';
+import { AvatarImage } from '@/components/avatar-image';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -81,17 +82,16 @@ export function UserManagement() {
       title: '用户',
       render: (_value, item) => (
         <div className="flex items-center gap-3">
-          {item.avatar ? (
-            <img
-              src={item.avatar}
-              alt={item.nickname || item.email}
-              className="size-8 shrink-0 rounded-full object-cover"
-            />
-          ) : (
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">
-              {(item.nickname || item.email).slice(0, 1).toUpperCase()}
-            </div>
-          )}
+          <AvatarImage
+            src={item.avatar ?? ''}
+            alt={item.nickname || item.email}
+            className="size-8 shrink-0 rounded-full object-cover"
+            fallback={
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                {(item.nickname || item.email).slice(0, 2).toUpperCase()}
+              </div>
+            }
+          />
           <div className="flex min-w-0 flex-col">
             <span className="truncate font-medium">{item.nickname || '-'}</span>
             <span className="truncate text-xs text-muted-foreground">
