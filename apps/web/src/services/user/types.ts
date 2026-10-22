@@ -42,11 +42,11 @@ export interface UserSummary {
   status: UserStatus;
   createdAt: string;
   updatedAt: string;
+  roles: UserRole[];
 }
 
 export interface UserDetail extends UserSummary {
   roleIds: number[];
-  roles: UserRole[];
 }
 
 export interface ListUsersParams {

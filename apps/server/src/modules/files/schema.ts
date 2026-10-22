@@ -3,7 +3,7 @@ import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqli
 import { users } from '../auth/user/schema.js';
 
 export const uploadedFiles = sqliteTable(
-  'velo_uploaded_files',
+  'velo_files_local',
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
     storageKey: text('storage_key').notNull(),
@@ -16,7 +16,7 @@ export const uploadedFiles = sqliteTable(
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
   },
   (table) => [
-    uniqueIndex('velo_uploaded_files_storage_key_unique').on(table.storageKey),
-    index('velo_uploaded_files_uploader_created_at_idx').on(table.uploaderId, table.createdAt),
+    uniqueIndex('velo_files_local_storage_key_unique').on(table.storageKey),
+    index('velo_files_local_uploader_created_at_idx').on(table.uploaderId, table.createdAt),
   ],
 );

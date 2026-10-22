@@ -102,6 +102,22 @@ export function UserManagement() {
       ),
     },
     {
+      key: 'roles',
+      title: '角色',
+      render: (_value, item) =>
+        item.roles.length ? (
+          <div className="flex flex-wrap gap-1">
+            {item.roles.map((role) => (
+              <Badge key={role.code} variant="outline">
+                {role.name}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        ),
+    },
+    {
       key: 'status',
       title: '状态',
       render: (_value, item) => (

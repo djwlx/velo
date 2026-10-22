@@ -54,8 +54,9 @@ export function Header() {
           <Menu />
         </Button>
       ) : null}
-      <Link href="/" className="text-lg font-medium">
-        Velo
+      <Link href="/" className="flex items-center gap-2 text-lg font-medium">
+        <img src="/logo.svg" alt="" aria-hidden="true" className="size-8" />
+        <span>Velo</span>
       </Link>
       {user ? (
         <DropdownMenu>

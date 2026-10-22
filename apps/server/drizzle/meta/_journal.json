@@ -43,6 +43,13 @@
       "when": 1792485194320,
       "tag": "0005_fair_mother_askani",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1792651246802,
+      "tag": "0006_concerned_iron_monger",
+      "breakpoints": true
     }
   ]
 }

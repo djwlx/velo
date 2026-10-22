@@ -14,6 +14,7 @@ import {
   getRolesByIds,
   getUserRoleIds,
   getUserRoles,
+  getUserRolesByUserIds,
   isLastActiveAdmin,
   setUserRoles,
 } from '../role/repository.js';
@@ -222,7 +223,17 @@ export const listUsersHandler: Handler = (c) => {
   const pageSize = parsePageParam(c.req.query('pageSize'), DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
   const keyword = c.req.query('keyword')?.trim() || undefined;
   const { rows, total } = listUsers({ offset: (page - 1) * pageSize, limit: pageSize, keyword });
-  return c.json(success({ list: rows, total, page, pageSize }));
+  const rolesByUserId = new Map<number, Array<{ code: string; name: string }>>();
+  for (const { userId, ...role } of getUserRolesByUserIds(rows.map(({ id }) => id))) {
+    const roles = rolesByUserId.get(userId) ?? [];
+    roles.push(role);
+    rolesByUserId.set(userId, roles);
+  }
+  const list = rows.map((user) => ({
+    ...user,
+    roles: rolesByUserId.get(user.id) ?? [],
+  }));
+  return c.json(success({ list, total, page, pageSize }));
 };
 
 export const getUserHandler: Handler = (c) => {

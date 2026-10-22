@@ -49,6 +49,16 @@ export const getUserRoles = (userId: number) =>
     .where(eq(userRoles.userId, userId))
     .all();
 
+export const getUserRolesByUserIds = (userIds: number[]) =>
+  userIds.length
+    ? db
+        .select({ userId: userRoles.userId, code: roles.code, name: roles.name })
+        .from(userRoles)
+        .innerJoin(roles, eq(roles.id, userRoles.roleId))
+        .where(inArray(userRoles.userId, userIds))
+        .all()
+    : [];
+
 export const getUserRoleIds = (userId: number): number[] =>
   db
     .select({ roleId: userRoles.roleId })

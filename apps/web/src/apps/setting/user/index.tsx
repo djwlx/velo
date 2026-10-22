@@ -7,7 +7,7 @@ import { Form, FormField, FormInput, FormSubmit } from '@/components/form';
 import { AvatarImage } from '@/components/avatar-image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+
 import { toast } from '@/components/ui/toast';
 import { useRequestQuery } from '@/hooks/useRequestQuery';
 import { uploadFile } from '@/services/file';
@@ -15,6 +15,7 @@ import { getCurrentUser, updateMe } from '@/services/user';
 import { useUser } from '@/stores/user';
 
 import { userSchema, type UserFormValues } from './types';
+import { Loading } from '@/components/states/Loading';
 
 export function UserInfo() {
   const { data, loading } = useRequestQuery(getCurrentUser);
@@ -83,11 +84,7 @@ export function UserInfo() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="flex flex-col gap-4">
-              <Skeleton className="h-9 w-full" />
-              <Skeleton className="h-9 w-full" />
-              <Skeleton className="h-9 w-full" />
-            </div>
+            <Loading />
           ) : (
             <Form form={form} onSubmit={onSubmit}>
               <FormField
