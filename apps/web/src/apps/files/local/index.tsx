@@ -89,6 +89,7 @@ function FileListLocal() {
           columns={columns}
           rowKey="id"
           loadPage={loadPage}
+          onRowClick={openEntry}
           onNavigate={(entry) =>
             setLocation(
               entry.cid === '/'

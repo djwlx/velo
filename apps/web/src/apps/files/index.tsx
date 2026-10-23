@@ -1,6 +1,6 @@
 import type { ManagedFile } from '@velo/shared';
 import { Folder } from 'lucide-react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 
 import {
   FileListTable,
@@ -22,7 +22,7 @@ const roots: ManagedFile[] = [
   },
   {
     id: '115',
-    name: '115',
+    name: '115网盘',
     path: '0',
     source: '115',
     isDirectory: true,
@@ -49,13 +49,15 @@ const columns: FileListTableColumn<ManagedFile>[] = [
         className="inline-flex items-center gap-1.5 text-primary hover:underline"
       >
         <Folder className="size-4 shrink-0" />
-        {item.source === 'local' ? '本地' : '115'}
+        {item.name}
       </Link>
     ),
   },
 ];
 
 function FileList() {
+  const [, setLocation] = useLocation();
+
   return (
     <main className="px-4 py-6">
       <Card className="gap-0">
@@ -64,6 +66,9 @@ function FileList() {
           rowKey="id"
           columns={columns}
           loadPage={loadRoots}
+          onRowClick={(item) =>
+            setLocation(item.source === 'local' ? '/files/local' : '/files/115')
+          }
         />
       </Card>
     </main>

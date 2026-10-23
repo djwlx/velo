@@ -38,7 +38,7 @@ export function TruncatedText({ text, className }: TruncatedTextProps) {
         </span>
         <TooltipTrigger
           disabled={!truncated}
-          className="absolute inset-y-0 right-0 w-4 cursor-default"
+          className="absolute inset-y-0 right-0 w-4"
           render={<span />}
         />
       </span>

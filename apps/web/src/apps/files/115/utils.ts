@@ -5,7 +5,7 @@ import type { BreadcrumbEntry } from './types';
 export const PAGE_SIZE = 50;
 export { isVideoFileName } from '@/apps/video/utils';
 
-export const ROOT_ENTRY: BreadcrumbEntry = { cid: '0', name: '115 网盘' };
+export const ROOT_ENTRY: BreadcrumbEntry = { cid: '0', name: '115网盘' };
 
 export const toBreadcrumbs = (
   path: Pan115PathItem[] | undefined

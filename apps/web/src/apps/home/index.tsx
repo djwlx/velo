@@ -12,7 +12,7 @@ const entries = [
   {
     href: '/files',
     title: '文件管理',
-    description: '浏览 115 网盘和本地文件',
+    description: '浏览 115网盘和本地文件',
     icon: FolderOpen,
     external: false,
   },

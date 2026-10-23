@@ -19,7 +19,7 @@ export function FileEntryName({ item, onOpen }: FileEntryNameProps) {
   return (
     <button
       type="button"
-      className="inline-flex max-w-full items-center gap-1.5 text-primary hover:underline"
+      className="inline-flex max-w-full cursor-pointer items-center gap-1.5 text-primary hover:underline"
       onClick={onOpen}
     >
       <Icon className="size-4 shrink-0" />

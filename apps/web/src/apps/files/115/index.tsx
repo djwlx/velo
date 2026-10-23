@@ -12,7 +12,7 @@ import { formatFileSize } from '@/utils/file';
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'wouter';
 import { getFileDirectoryLocation } from '../utils';
-import { NameCell } from './components/NameCell';
+import { NameCell, isPreviewableFileName } from './components/NameCell';
 import type { ItemsType } from './types';
 import {
   PAGE_SIZE,
@@ -35,6 +35,54 @@ function FileList115() {
       setLocation(getFileDirectoryLocation('115', nextCid));
     },
     [setLocation]
+  );
+
+  const openVideo = useCallback(
+    (item: ItemsType) => {
+      if (!item.pickCode) return;
+
+      const query = new URLSearchParams({
+        type: '115',
+        id: item.pickCode,
+        name: item.name,
+      });
+      const currentCid = searchParams.get('path');
+      if (currentCid && /^\d+$/.test(currentCid)) {
+        query.set('path', currentCid);
+      }
+
+      const videoPath = `/video?${query.toString()}`;
+
+      if (isAndroid()) {
+        openInMxPlayer(getFilePreviewUrl(item.pickCode), {
+          title: item.name,
+          fallbackUrl: new URL(videoPath, window.location.origin).toString(),
+        });
+        return;
+      }
+
+      setLocation(videoPath);
+    },
+    [searchParams, setLocation]
+  );
+
+  const activate = useCallback(
+    (item: ItemsType) => {
+      if (item.isDir) {
+        navigate(item.cid ?? ROOT_ENTRY.cid);
+        return;
+      }
+      if (!item.pickCode) return;
+
+      if (isVideoFileName(item.name)) {
+        openVideo(item);
+      } else if (isPreviewableFileName(item.name)) {
+        previewFile(item.pickCode);
+      } else {
+        downloadFile(item.pickCode, item.name);
+      }
+    },
+    [navigate, openVideo]
   );
 
   const loadPage = useCallback(
@@ -63,44 +111,7 @@ function FileList115() {
       title: '名称',
       className: 'w-full',
       render: (_value, item) => (
-        <NameCell
-          item={item}
-          onOpen={() => navigate(item.cid ?? ROOT_ENTRY.cid)}
-          onDownload={() => {
-            if (item.pickCode) downloadFile(item.pickCode, item.name);
-          }}
-          onPreview={() => {
-            if (item.pickCode) previewFile(item.pickCode);
-          }}
-          onVideo={() => {
-            if (!item.pickCode || !isVideoFileName(item.name)) return;
-
-            const query = new URLSearchParams({
-              type: '115',
-              id: item.pickCode,
-              name: item.name,
-            });
-            const currentCid = searchParams.get('path');
-            if (currentCid && /^\d+$/.test(currentCid)) {
-              query.set('path', currentCid);
-            }
-
-            const videoPath = `/video?${query.toString()}`;
-
-            if (isAndroid()) {
-              openInMxPlayer(getFilePreviewUrl(item.pickCode), {
-                title: item.name,
-                fallbackUrl: new URL(
-                  videoPath,
-                  window.location.origin
-                ).toString(),
-              });
-              return;
-            }
-
-            setLocation(videoPath);
-          }}
-        />
+        <NameCell item={item} onActivate={() => activate(item)} />
       ),
     },
     {
@@ -124,6 +135,7 @@ function FileList115() {
           columns={columns}
           loadPage={loadPage}
           pageSize={PAGE_SIZE}
+          onRowClick={activate}
           onNavigate={(entry) =>
             entry.cid === '/' ? setLocation('/files') : navigate(entry.cid)
           }

@@ -20,4 +20,5 @@ export interface ProTableProps<T = unknown> {
   footer?: ReactNode;
   isLoading?: boolean;
   emptyText?: ReactNode;
+  onRowClick?: (item: T, index: number) => void;
 }

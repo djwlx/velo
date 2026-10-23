@@ -29,6 +29,7 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
     loadPage,
     pageSize = DEFAULT_PAGE_SIZE,
     emptyText,
+    onRowClick,
   } = props;
 
   const [items, setItems] = useState<T[]>([]);
@@ -157,6 +158,7 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
         items={items}
         isLoading={isLoading}
         footer={infiniteFooter}
+        onRowClick={onRowClick}
         emptyText={
           hasError
             ? '文件列表加载失败，请刷新重试'

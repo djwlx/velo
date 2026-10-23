@@ -16,10 +16,7 @@ import { isVideoFileName } from '../utils';
 
 export interface NameCellProps {
   item: ItemsType;
-  onOpen: () => void;
-  onDownload: () => void;
-  onPreview?: () => void;
-  onVideo?: () => void;
+  onActivate: () => void;
 }
 
 const IMAGE_EXTENSIONS = new Set([
@@ -103,6 +100,12 @@ const PREVIEW_EXTENSIONS = new Set([
   'pdf',
 ]);
 
+const getExtension = (name: string) =>
+  name.split('.').pop()?.toLowerCase() ?? '';
+
+export const isPreviewableFileName = (name: string): boolean =>
+  isVideoFileName(name) || PREVIEW_EXTENSIONS.has(getExtension(name));
+
 function FileTypeIcon({
   name,
   className,
@@ -130,31 +133,21 @@ function FileTypeIcon({
   return <File className={className} />;
 }
 
-export function NameCell({
-  item,
-  onOpen,
-  onDownload,
-  onPreview,
-  onVideo,
-}: NameCellProps) {
+export function NameCell({ item, onActivate }: NameCellProps) {
   const label = <TruncatedText text={item.name} />;
 
   if (item.isDir) {
     return (
       <button
         type="button"
-        className="inline-flex items-center gap-1.5 text-primary hover:underline"
-        onClick={onOpen}
+        className="inline-flex cursor-pointer items-center gap-1.5 text-primary hover:underline"
+        onClick={onActivate}
       >
         <Folder className="size-4 shrink-0" />
         {label}
       </button>
     );
   }
-
-  const isPreviewable =
-    isVideoFileName(item.name) ||
-    PREVIEW_EXTENSIONS.has(item.name.split('.').pop()?.toLowerCase() ?? '');
 
   const content = (
     <>
@@ -174,18 +167,11 @@ export function NameCell({
     );
   }
 
-  const onClick =
-    isVideoFileName(item.name) && onVideo
-      ? onVideo
-      : isPreviewable && onPreview
-        ? onPreview
-        : onDownload;
-
   return (
     <button
       type="button"
-      className="inline-flex max-w-full items-center gap-1.5 text-left hover:underline"
-      onClick={onClick}
+      className="inline-flex max-w-full cursor-pointer items-center gap-1.5 text-left hover:underline"
+      onClick={onActivate}
     >
       {content}
     </button>

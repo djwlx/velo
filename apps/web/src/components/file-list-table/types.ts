@@ -17,7 +17,7 @@ export interface FileListTableLoadResult<T> {
 
 export interface FileListTableProps<T> extends Pick<
   ProTableProps<T>,
-  'className' | 'columns' | 'rowKey'
+  'className' | 'columns' | 'rowKey' | 'onRowClick'
 > {
   cid: string;
   onNavigate?: (entry: FileTableBreadcrumbItem, index: number) => void;

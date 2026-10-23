@@ -22,6 +22,7 @@ export function ProTable<T>(props: ProTableProps<T>) {
     footer,
     isLoading = false,
     emptyText = '暂无数据',
+    onRowClick,
   } = props;
 
   return (
@@ -68,7 +69,25 @@ export function ProTable<T>(props: ProTableProps<T>) {
                 : index;
 
               return (
-                <TableRow key={dataRowKey}>
+                <TableRow
+                  key={dataRowKey}
+                  className={onRowClick ? 'cursor-pointer' : undefined}
+                  onClick={
+                    onRowClick
+                      ? (event) => {
+                          const target = event.target as HTMLElement;
+                          if (
+                            target.closest(
+                              'button, a, input, select, textarea, [role="button"]'
+                            )
+                          ) {
+                            return;
+                          }
+                          onRowClick(item, index);
+                        }
+                      : undefined
+                  }
+                >
                   {columns.map((column) => {
                     const rowCellKey = `${dataRowKey}-${column.key}`;
 
