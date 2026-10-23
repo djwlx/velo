@@ -1,9 +1,9 @@
-import { usePlayerGestures } from '../hooks/usePlayerGestures';
+import { useLongPressSpeed } from '../hooks/useLongPressSpeed';
 
-export function PlayerGestures() {
-  const boosting = usePlayerGestures();
+export function LongPressSpeedGesture() {
+  const active = useLongPressSpeed();
 
-  return boosting ? (
+  return active ? (
     <span
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-20 grid place-items-center"
