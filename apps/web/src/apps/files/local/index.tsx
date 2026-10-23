@@ -14,6 +14,8 @@ import {
   getLocalFiles,
   getLocalFileUrl,
 } from '@/services/file';
+import { isAndroid } from '@/utils/device';
+import { openInMxPlayer } from '@/utils/external-player';
 import { formatFileSize } from '@/utils/file';
 import { isVideoFileName } from '@/apps/video/utils';
 import { FileEntryName } from './components/FileEntryName';
@@ -42,9 +44,17 @@ function FileListLocal() {
     if (item.isDirectory) {
       setLocation(getLocalDirectoryLocation(item.path));
     } else if (isVideoFileName(item.name)) {
-      setLocation(
-        `/video?${new URLSearchParams({ type: 'local', path: item.path }).toString()}`
-      );
+      const videoPath = `/video?${new URLSearchParams({ type: 'local', path: item.path }).toString()}`;
+
+      if (isAndroid()) {
+        openInMxPlayer(getLocalFileUrl(item.path), {
+          title: item.name,
+          fallbackUrl: new URL(videoPath, window.location.origin).toString(),
+        });
+        return;
+      }
+
+      setLocation(videoPath);
     } else if (
       /^(?:image\/|audio\/|application\/pdf$)/.test(item.contentType ?? '')
     ) {
