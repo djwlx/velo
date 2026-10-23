@@ -137,7 +137,7 @@ export function NameCell({
   onPreview,
   onVideo,
 }: NameCellProps) {
-  const label = <TruncatedText className="max-w-[50vw]" text={item.name} />;
+  const label = <TruncatedText text={item.name} />;
 
   if (item.isDir) {
     return (

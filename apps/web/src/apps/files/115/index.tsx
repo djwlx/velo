@@ -10,7 +10,6 @@ import { formatFileSize } from '@/utils/file';
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'wouter';
 import { getFileDirectoryLocation } from '../utils';
-import { CacheButton } from './components/CacheButton';
 import { NameCell } from './components/NameCell';
 import type { ItemsType } from './types';
 import {
@@ -59,6 +58,7 @@ function FileList115() {
     {
       key: 'name',
       title: '名称',
+      className: 'w-full',
       render: (_value, item) => (
         <NameCell
           item={item}
@@ -97,12 +97,6 @@ function FileList115() {
 
         return formatFileSize(item.size);
       },
-    },
-    {
-      key: 'actions',
-      title: '操作',
-      render: (_value, item) =>
-        item.isDir ? <CacheButton cid={item.cid} /> : null,
     },
   ];
 

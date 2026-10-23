@@ -3,7 +3,7 @@ import { useCallback, type SyntheticEvent } from 'react';
 import { Video, VideoSkin, usePlayer } from '@videojs/react/video';
 
 import type { VideoPlayerProps } from '../types';
-import { LongPressSpeedGesture } from './LongPressSpeedGesture';
+import { PlayerGestures } from './PlayerGestures';
 
 const surfaceStyle = {
   '--media-object-fit': 'contain',
@@ -44,7 +44,7 @@ export function PlayerSurface({
       >
         {type ? <source src={src} type={type} /> : null}
       </Video>
-      <LongPressSpeedGesture />
+      <PlayerGestures />
     </VideoSkin>
   );
 }

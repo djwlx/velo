@@ -7,7 +7,6 @@ import {
   type FileListTableColumn,
   type FileListTableLoadParams,
 } from '@/components/file-list-table';
-import { Button } from '@/components/ui/button';
 import { withAuth } from '@/components/permission';
 import { Card } from '@/components/ui/card';
 import {
@@ -59,6 +58,7 @@ function FileListLocal() {
     {
       key: 'name',
       title: '名称',
+      className: 'w-full',
       render: (_value, item) => (
         <FileEntryName item={item} onOpen={() => openEntry(item)} />
       ),
@@ -68,28 +68,6 @@ function FileListLocal() {
       title: '大小',
       render: (_value, item) =>
         item.isDirectory ? '—' : formatFileSize(item.size),
-    },
-    {
-      key: 'modifiedAt',
-      title: '修改时间',
-      render: (_value, item) =>
-        item.modifiedAt
-          ? new Date(item.modifiedAt).toLocaleString('zh-CN')
-          : '—',
-    },
-    {
-      key: 'actions',
-      title: '操作',
-      render: (_value, item) =>
-        item.isDirectory ? null : (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => downloadLocalFile(item.path, item.name)}
-          >
-            下载
-          </Button>
-        ),
     },
   ];
 

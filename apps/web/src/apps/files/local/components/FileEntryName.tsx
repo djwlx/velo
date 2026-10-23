@@ -23,7 +23,7 @@ export function FileEntryName({ item, onOpen }: FileEntryNameProps) {
       onClick={onOpen}
     >
       <Icon className="size-4 shrink-0" />
-      <TruncatedText className="max-w-[50vw]" text={item.name} />
+      <TruncatedText text={item.name} />
     </button>
   );
 }
