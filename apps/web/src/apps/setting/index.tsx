@@ -1,5 +1,8 @@
 import { Redirect } from 'wouter';
+import { withAuth } from '@/components/permission';
 
-export function Setting() {
+function Setting() {
   return <Redirect to="/setting/me" />;
 }
+
+export default withAuth(Setting);

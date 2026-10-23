@@ -11,7 +11,7 @@ type DbClient = Pick<typeof db, 'select' | 'insert' | 'update' | 'delete'>;
 export const createAdminRole = (client: DbClient, now: Date) => {
   const insertedRole = client
     .insert(roles)
-    .values({ code: ADMIN_ROLE, name: 'Administrator', createdAt: now, updatedAt: now })
+    .values({ code: ADMIN_ROLE, name: '管理员', createdAt: now, updatedAt: now })
     .onConflictDoNothing({ target: roles.code })
     .returning({ id: roles.id })
     .get();

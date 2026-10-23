@@ -11,7 +11,8 @@ export const pan115Route = new Hono<Pan115Env>();
 pan115Route.use(injectCookie);
 
 pan115Route.get('/pic/random', getRandomPic);
-pan115Route.use('*', requirePermission('module:115'));
+
+pan115Route.use('*', requirePermission('admin'));
 
 pan115Route.get('/files/:cid', getFiles);
 pan115Route.get('/file/:pickCode', getFile);

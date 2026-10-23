@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 
 import { ProTable, type ProTableColumn } from '@/components/pro-table';
 import { AvatarImage } from '@/components/avatar-image';
+import { withAuth } from '@/components/permission';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,7 +27,7 @@ import { UserFormDialog } from './components/UserFormDialog';
 
 const PAGE_SIZE = 20;
 
-export function UserManagement() {
+function UserManagement() {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -246,3 +247,5 @@ export function UserManagement() {
     </main>
   );
 }
+
+export default withAuth(UserManagement);

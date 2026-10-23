@@ -11,7 +11,7 @@ import {
 
 export const roleRoute = new Hono();
 
-roleRoute.use('*', requirePermission('module:auth'));
+roleRoute.use('*', requirePermission('admin'));
 
 roleRoute.get('/', listRolesHandler);
 roleRoute.post('/', createRoleHandler);

@@ -2,6 +2,12 @@ import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqli
 
 import { users } from '../auth/user/schema.js';
 
+// Legacy rows remain in the database; local file links now carry their relative path.
+export const localFileEntries = sqliteTable('velo_files_local_entries', {
+  id: text('id').primaryKey(),
+  path: text('path').notNull().unique(),
+});
+
 export const uploadedFiles = sqliteTable(
   'velo_files_local',
   {

@@ -11,7 +11,7 @@ import {
 
 export const userRoute = new Hono();
 
-userRoute.use('*', requirePermission('module:auth'));
+userRoute.use('*', requirePermission('admin'));
 
 userRoute.get('/', listUsersHandler);
 userRoute.post('/', createUserHandler);

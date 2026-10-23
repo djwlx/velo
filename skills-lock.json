@@ -12,6 +12,12 @@
       "sourceType": "github",
       "skillPath": "skills/turborepo/SKILL.md",
       "computedHash": "fb06bed05c194cc42f7292f996676254e25080aebaaed613ad3cb0591645e1b0"
+    },
+    "videojs": {
+      "source": "videojs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/videojs/SKILL.md",
+      "computedHash": "47653029213dfaef9f544b87c165ec5b81dd31376204053db513e9b510eaf51d"
     }
   }
 }

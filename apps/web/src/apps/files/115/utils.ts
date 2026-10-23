@@ -3,31 +3,14 @@ import { ACCESS_TOKEN_KEY } from '@/utils/request';
 import type { BreadcrumbEntry } from './types';
 
 export const PAGE_SIZE = 50;
-export const CID_PARAM = 'cid';
+export { isVideoFileName } from '@/apps/video/utils';
 
-const VIDEO_EXTENSIONS = new Set([
-  'mp4',
-  'mkv',
-  'avi',
-  'mov',
-  'wmv',
-  'flv',
-  'webm',
-  'm4v',
-  'rmvb',
-  'mpeg',
-  'mpg',
-  'ts',
-]);
-
-export const isVideoFileName = (name: string): boolean =>
-  VIDEO_EXTENSIONS.has(name.split('.').pop()?.toLowerCase() ?? '');
-
-export const ROOT_ENTRY: BreadcrumbEntry = { cid: '0', name: '全部文件' };
+export const ROOT_ENTRY: BreadcrumbEntry = { cid: '0', name: '115 网盘' };
 
 export const toBreadcrumbs = (
   path: Pan115PathItem[] | undefined
 ): BreadcrumbEntry[] => [
+  { cid: '/', name: '文件管理' },
   ROOT_ENTRY,
   ...(path ?? [])
     .filter((entry) => entry.cid !== ROOT_ENTRY.cid)

@@ -1,6 +1,7 @@
 export interface PermissionInfo {
   code: string;
-  module: string;
+  resource: string;
+  operation: string;
   name: string;
   description: string;
 }

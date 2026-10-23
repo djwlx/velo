@@ -6,5 +6,5 @@ import { deleteConfigHandler, getVersionHandler, setConfigHandler } from './serv
 export const configRoute = new Hono();
 
 configRoute.get('/version', getVersionHandler);
-configRoute.post('/', requirePermission('module:config'), setConfigHandler);
-configRoute.delete('/:key', requirePermission('module:config'), deleteConfigHandler);
+configRoute.post('/', requirePermission('admin'), setConfigHandler);
+configRoute.delete('/:key', requirePermission('admin'), deleteConfigHandler);

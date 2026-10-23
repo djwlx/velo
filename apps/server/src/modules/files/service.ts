@@ -29,6 +29,7 @@ const normalizeFilename = (filename: string): string => {
     .replaceAll('\\', '/')
     .split('/')
     .at(-1)
+    // oxlint-disable-next-line no-control-regex -- Remove control characters from uploaded filenames.
     ?.replace(/[\u0000-\u001f\u007f]/g, '')
     .trim()
     .slice(0, 255);
@@ -105,7 +106,7 @@ export const downloadFileHandler: Handler = async (c) => {
   const user = c.get('authUser') as AuthUser;
   const ownedFile = getUploadedFileForOwner(id, user.id);
   const avatarFile =
-    !ownedFile && c.get('permissions').has('module:auth') ? getUploadedAvatarFile(id) : undefined;
+    !ownedFile && c.get('permissions').has('admin') ? getUploadedAvatarFile(id) : undefined;
   const file = ownedFile ?? avatarFile;
   if (!file) return c.json(fail('fileNotFound', ErrorCode.ResourceNotFound), 404);
   if (avatarFile && !avatarFile.contentType.startsWith('image/')) {

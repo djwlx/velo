@@ -4,17 +4,16 @@ import {
   type FileListTableLoadParams,
 } from '@/components/file-list-table';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { withAuth } from '@/components/permission';
 import { getFileList } from '@/services/pan115';
 import { formatFileSize } from '@/utils/file';
-import { ArrowLeft } from 'lucide-react';
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'wouter';
+import { getFileDirectoryLocation } from '../utils';
 import { CacheButton } from './components/CacheButton';
 import { NameCell } from './components/NameCell';
 import type { ItemsType } from './types';
 import {
-  CID_PARAM,
   PAGE_SIZE,
   ROOT_ENTRY,
   downloadFile,
@@ -23,25 +22,17 @@ import {
   toBreadcrumbs,
 } from './utils';
 
-export function FileList115() {
-  const [searchParams, setSearchParams] = useSearchParams();
+function FileList115() {
+  const [searchParams] = useSearchParams();
   const [, setLocation] = useLocation();
 
-  const cid = searchParams.get(CID_PARAM) ?? ROOT_ENTRY.cid;
+  const cid = searchParams.get('path') ?? ROOT_ENTRY.cid;
 
   const navigate = useCallback(
     (nextCid: string) => {
-      setSearchParams((prev) => {
-        const params = new URLSearchParams(prev);
-        if (nextCid === ROOT_ENTRY.cid) {
-          params.delete(CID_PARAM);
-        } else {
-          params.set(CID_PARAM, nextCid);
-        }
-        return params;
-      });
+      setLocation(getFileDirectoryLocation('115', nextCid));
     },
-    [setSearchParams]
+    [setLocation]
   );
 
   const loadPage = useCallback(
@@ -81,15 +72,17 @@ export function FileList115() {
           onVideo={() => {
             if (!item.pickCode || !isVideoFileName(item.name)) return;
 
-            const query = new URLSearchParams({ name: item.name });
-            const currentCid = searchParams.get(CID_PARAM);
+            const query = new URLSearchParams({
+              type: '115',
+              id: item.pickCode,
+              name: item.name,
+            });
+            const currentCid = searchParams.get('path');
             if (currentCid && /^\d+$/.test(currentCid)) {
-              query.set(CID_PARAM, currentCid);
+              query.set('path', currentCid);
             }
 
-            setLocation(
-              `/video/115/${encodeURIComponent(item.pickCode)}?${query.toString()}`
-            );
+            setLocation(`/video?${query.toString()}`);
           }}
         />
       ),
@@ -115,21 +108,19 @@ export function FileList115() {
 
   return (
     <main className="px-4 py-6">
-      <div className="flex pb-4">
-        <Button variant="outline" size="sm" onClick={() => setLocation('/')}>
-          <ArrowLeft data-icon="inline-start" />
-          返回
-        </Button>
-      </div>
       <Card className="gap-0">
         <FileListTable
           cid={cid}
           columns={columns}
           loadPage={loadPage}
           pageSize={PAGE_SIZE}
-          onNavigate={(entry) => navigate(entry.cid)}
+          onNavigate={(entry) =>
+            entry.cid === '/' ? setLocation('/files') : navigate(entry.cid)
+          }
         />
       </Card>
     </main>
   );
 }
+
+export default withAuth(FileList115, { permission: 'file:read' });

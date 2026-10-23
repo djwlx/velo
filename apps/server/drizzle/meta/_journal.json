@@ -50,6 +50,41 @@
       "when": 1792651246802,
       "tag": "0006_concerned_iron_monger",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1792739973054,
+      "tag": "0007_local_file_ids",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1792740409571,
+      "tag": "0008_string_mappings",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1792740559224,
+      "tag": "0009_rename_string_map",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1792742004345,
+      "tag": "0010_resource_operation_permissions",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1792743122146,
+      "tag": "0011_translate_admin_role",
+      "breakpoints": true
     }
   ]
 }

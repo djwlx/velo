@@ -53,7 +53,9 @@ const toRoleDetail = (role: Role, permissionCodes: string[], userCount: number) 
 });
 
 const resolvePermissions = (role: Role, storedCodes: string[]): string[] =>
-  role.code === ADMIN_ROLE ? [...ALL_PERMISSIONS] : storedCodes;
+  role.code === ADMIN_ROLE
+    ? [...ALL_PERMISSIONS]
+    : storedCodes.filter((code) => PERMISSION_CODES.has(code));
 
 export const listRolesHandler: Handler = (c) => {
   const permissionsByRole = new Map<number, string[]>();
@@ -183,7 +185,7 @@ export const updateRoleHandler: Handler = async (c) => {
     success({
       role: toRoleDetail(
         updated,
-        permissionCodes ?? getRolePermissions(roleId),
+        permissionCodes ?? resolvePermissions(updated, getRolePermissions(roleId)),
         countRoleUsers(roleId),
       ),
     }),

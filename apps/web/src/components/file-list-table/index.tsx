@@ -16,7 +16,6 @@ export type {
   FileTableBreadcrumbItem,
   FileTableHeaderProps,
 } from './components/TableHeader';
-export { FileTableHeader } from './components/TableHeader';
 
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -38,14 +37,16 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
   const [breadcrumbs, setBreadcrumbs] = useState<FileTableBreadcrumbItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const requestId = useRef(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const hasMore = items.length < total;
+  const hasMore = !hasError && items.length < total;
 
   const fetchPage = useCallback(
     async (targetCid: string, nextPage: number, append: boolean) => {
       const currentRequestId = ++requestId.current;
+      setHasError(false);
 
       if (append) {
         setIsLoadingMore(true);
@@ -70,6 +71,8 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
         setPage(result.page);
         setTotal(result.total);
         if (!append && result.path) setBreadcrumbs(result.path);
+      } catch {
+        if (currentRequestId === requestId.current) setHasError(true);
       } finally {
         if (currentRequestId === requestId.current) {
           setIsLoading(false);
@@ -141,7 +144,11 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
         items={items}
         isLoading={isLoading}
         footer={infiniteFooter}
-        emptyText={emptyText ?? '文件夹为空'}
+        emptyText={
+          hasError
+            ? '文件列表加载失败，请刷新重试'
+            : (emptyText ?? '文件夹为空')
+        }
       />
     </>
   );

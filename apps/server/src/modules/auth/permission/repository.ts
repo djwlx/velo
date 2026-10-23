@@ -11,7 +11,7 @@ export const getUserPermissions = (userId: number): Set<string> =>
     .innerJoin(roles, eq(roles.id, userRoles.roleId))
     .where(and(eq(userRoles.userId, userId), eq(roles.code, ADMIN_ROLE)))
     .get()
-    ? new Set(ALL_PERMISSIONS)
+    ? new Set([ADMIN_ROLE, ...ALL_PERMISSIONS])
     : new Set(
         db
           .select({ permissionCode: rolePermissions.permissionCode })
@@ -19,8 +19,11 @@ export const getUserPermissions = (userId: number): Set<string> =>
           .innerJoin(rolePermissions, eq(rolePermissions.roleId, userRoles.roleId))
           .where(eq(userRoles.userId, userId))
           .all()
-          .map(({ permissionCode }) => permissionCode),
+          .map(({ permissionCode }) => permissionCode)
+          .filter((code) => (ALL_PERMISSIONS as readonly string[]).includes(code)),
       );
 
-export const hasPermission = (userId: number, permissionCode: string): boolean =>
-  getUserPermissions(userId).has(permissionCode);
+export const hasPermission = (userId: number, permissionCode: string): boolean => {
+  const permissions = getUserPermissions(userId);
+  return permissions.has(ADMIN_ROLE) || permissions.has(permissionCode);
+};

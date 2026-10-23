@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { Form, FormAvatar, FormInput, FormSubmit } from '@/components/form';
+import { withAuth } from '@/components/permission';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { toast } from '@/components/ui/toast';
@@ -14,7 +15,7 @@ import { useUser } from '@/stores/user';
 import { userSchema, type UserFormValues } from './types';
 import { Loading } from '@/components/states/Loading';
 
-export function UserInfo() {
+function UserInfo() {
   const { data, loading } = useRequestQuery(getCurrentUser);
   const setUser = useUser((state) => state.setUser);
   const user = data?.data.user;
@@ -90,3 +91,5 @@ export function UserInfo() {
     </main>
   );
 }
+
+export default withAuth(UserInfo);

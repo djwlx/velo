@@ -33,7 +33,7 @@ ENV NODE_ENV=production
 
 COPY --from=build /out ./
 
-RUN mkdir -p /app/data/uploads && chmod 700 /app/data/uploads
+RUN mkdir -p /app/data/uploads /app/data/files && chmod 700 /app/data/uploads /app/data/files
 
 VOLUME ["/app/data"]
 

@@ -2,25 +2,21 @@ export const ADMIN_ROLE = 'admin' as const;
 
 export const PERMISSIONS = [
   {
-    code: 'module:115',
-    module: '115',
-    name: '115 module access',
-    description: 'Access 115 file and picture APIs',
+    code: 'file:read',
+    resource: 'file',
+    operation: 'read',
+    name: '读取文件',
+    description: '浏览和读取文件',
   },
   {
-    code: 'module:auth',
-    module: 'auth',
-    name: 'Auth module access',
-    description: 'Manage users and roles, view permissions',
-  },
-  {
-    module: 'config',
-    code: 'module:config',
-    name: 'Config module access',
-    description: 'Access configuration and version APIs',
+    code: 'file:write',
+    resource: 'file',
+    operation: 'write',
+    name: '写入文件',
+    description: '上传和修改文件',
   },
 ] as const;
 
-export type Permission = (typeof PERMISSIONS)[number]['code'];
+export type Permission = (typeof PERMISSIONS)[number]['code'] | typeof ADMIN_ROLE;
 
-export const ALL_PERMISSIONS = PERMISSIONS.map(({ code }) => code) as Permission[];
+export const ALL_PERMISSIONS = PERMISSIONS.map(({ code }) => code);

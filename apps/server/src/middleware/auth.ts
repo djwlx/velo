@@ -2,6 +2,7 @@ import { ErrorCode } from '@velo/shared';
 import type { MiddlewareHandler } from 'hono';
 
 import type { Permission } from '../config/permissions.js';
+import { ADMIN_ROLE } from '../config/permissions.js';
 import { PUBLIC_API_PATHS } from '../config/public-routes.js';
 import { verifyAccessToken } from '../libs/jwt.js';
 import { getUserPermissions } from '../modules/auth/permission/repository.js';
@@ -35,7 +36,7 @@ export const requirePermission =
   (...permissions: [Permission, ...Permission[]]): MiddlewareHandler =>
   async (c, next) => {
     const userPermissions = c.get('permissions');
-    if (permissions.some((permission) => !userPermissions.has(permission))) {
+    if (!userPermissions.has(ADMIN_ROLE) && permissions.some((permission) => !userPermissions.has(permission))) {
       return c.json(fail('permissionDenied', ErrorCode.PermissionDenied), 403);
     }
     await next();

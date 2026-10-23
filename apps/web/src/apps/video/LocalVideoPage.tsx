@@ -1,56 +1,38 @@
-import { useEffect, useRef } from 'react';
-import { ArrowLeft, FileVideo2 } from 'lucide-react';
-import { useLocation } from 'wouter';
+import { FileVideo2 } from 'lucide-react';
+import { useSearchParams } from 'wouter';
 
 import { VideoPlayer } from '@/components/video-player';
-import { Button } from '@/components/ui/button';
+import { withAuth } from '@/components/permission';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { clearLocalVideo, getLocalVideo } from './local-video';
+import { getLocalFileUrl } from '@/services/file';
 
-export function LocalVideoPage() {
-  const [, setLocation] = useLocation();
-  const releaseTimerRef = useRef<number | null>(null);
-  const video = getLocalVideo();
+import { getVideoMimeType, isVideoFileName } from './utils';
 
-  useEffect(() => {
-    if (releaseTimerRef.current !== null) {
-      window.clearTimeout(releaseTimerRef.current);
-      releaseTimerRef.current = null;
-    }
-    if (!video) return;
-
-    return () => {
-      releaseTimerRef.current = window.setTimeout(() => {
-        clearLocalVideo(video.src);
-        releaseTimerRef.current = null;
-      }, 0);
-    };
-  }, [video]);
+function LocalVideoPage() {
+  const [searchParams] = useSearchParams();
+  const path = searchParams.get('path') ?? '';
+  const name = path.split('/').at(-1) ?? '';
+  const valid = path.length > 0 && isVideoFileName(name);
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4 py-6">
-      <Button
-        variant="outline"
-        size="sm"
-        className="self-start"
-        onClick={() => setLocation('/')}
-      >
-        <ArrowLeft data-icon="inline-start" />
-        返回
-      </Button>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 break-all">
             <FileVideo2 className="size-5 shrink-0 text-muted-foreground" />
-            {video?.name ?? '本地视频'}
+            {name || '本地视频'}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {video ? (
-            <VideoPlayer src={video.src} type={video.type} />
+          {valid ? (
+            <VideoPlayer
+              src={getLocalFileUrl(path)}
+              type={getVideoMimeType(name)}
+            />
           ) : (
             <p className="text-sm text-muted-foreground">
-              本地视频已失效，请返回首页重新选择。
+              视频地址无效，请返回文件列表重新选择。
             </p>
           )}
         </CardContent>
@@ -58,3 +40,5 @@ export function LocalVideoPage() {
     </main>
   );
 }
+
+export default withAuth(LocalVideoPage, { permission: 'file:read' });

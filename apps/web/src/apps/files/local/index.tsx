@@ -1,0 +1,117 @@
+import type { ManagedFile } from '@velo/shared';
+import { useCallback } from 'react';
+import { useLocation, useSearchParams } from 'wouter';
+
+import {
+  FileListTable,
+  type FileListTableColumn,
+  type FileListTableLoadParams,
+} from '@/components/file-list-table';
+import { Button } from '@/components/ui/button';
+import { withAuth } from '@/components/permission';
+import { Card } from '@/components/ui/card';
+import {
+  downloadLocalFile,
+  getLocalFiles,
+  getLocalFileUrl,
+} from '@/services/file';
+import { formatFileSize } from '@/utils/file';
+import { isVideoFileName } from '@/apps/video/utils';
+import { FileEntryName } from './components/FileEntryName';
+import { getLocalDirectoryLocation } from './utils';
+
+function FileListLocal() {
+  const [searchParams] = useSearchParams();
+  const [, setLocation] = useLocation();
+  const directory = searchParams.get('path') ?? '';
+
+  const loadPage = useCallback(
+    async ({ cid, page, pageSize }: FileListTableLoadParams) => {
+      const response = await getLocalFiles(cid, page, pageSize);
+      return {
+        ...response.data,
+        path: response.data.path.map((entry) => ({
+          cid: entry.path,
+          name: entry.name,
+        })),
+      };
+    },
+    []
+  );
+
+  const openEntry = (item: ManagedFile) => {
+    if (item.isDirectory) {
+      setLocation(getLocalDirectoryLocation(item.path));
+    } else if (isVideoFileName(item.name)) {
+      setLocation(
+        `/video?${new URLSearchParams({ type: 'local', path: item.path }).toString()}`
+      );
+    } else if (
+      /^(?:image\/|audio\/|application\/pdf$)/.test(item.contentType ?? '')
+    ) {
+      window.open(getLocalFileUrl(item.path), '_blank', 'noopener');
+    } else {
+      downloadLocalFile(item.path, item.name);
+    }
+  };
+
+  const columns: FileListTableColumn<ManagedFile>[] = [
+    {
+      key: 'name',
+      title: '名称',
+      render: (_value, item) => (
+        <FileEntryName item={item} onOpen={() => openEntry(item)} />
+      ),
+    },
+    {
+      key: 'size',
+      title: '大小',
+      render: (_value, item) =>
+        item.isDirectory ? '—' : formatFileSize(item.size),
+    },
+    {
+      key: 'modifiedAt',
+      title: '修改时间',
+      render: (_value, item) =>
+        item.modifiedAt
+          ? new Date(item.modifiedAt).toLocaleString('zh-CN')
+          : '—',
+    },
+    {
+      key: 'actions',
+      title: '操作',
+      render: (_value, item) =>
+        item.isDirectory ? null : (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => downloadLocalFile(item.path, item.name)}
+          >
+            下载
+          </Button>
+        ),
+    },
+  ];
+
+  return (
+    <main className="flex flex-col gap-4 px-4 py-6">
+      <Card className="gap-0">
+        <FileListTable
+          cid={directory}
+          columns={columns}
+          rowKey="id"
+          loadPage={loadPage}
+          onNavigate={(entry) =>
+            setLocation(
+              entry.cid === '/'
+                ? '/files'
+                : getLocalDirectoryLocation(entry.cid)
+            )
+          }
+        />
+      </Card>
+    </main>
+  );
+}
+
+export default withAuth(FileListLocal, { permission: 'file:read' });

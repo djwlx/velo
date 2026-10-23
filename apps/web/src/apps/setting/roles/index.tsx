@@ -2,6 +2,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { ProTable, type ProTableColumn } from '@/components/pro-table';
+import { withAuth } from '@/components/permission';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +24,7 @@ import type { RoleDetail } from '@/services/role/types';
 import { RoleFormDialog } from './components/RoleFormDialog';
 import { ADMIN_ROLE } from './types';
 
-export function RoleManagement() {
+function RoleManagement() {
   const { data, loading, refetch } = useRequestQuery(listRoles);
   const { data: permissionsData } = useRequestQuery(listPermissions);
   const [formOpen, setFormOpen] = useState(false);
@@ -177,3 +178,5 @@ export function RoleManagement() {
     </main>
   );
 }
+
+export default withAuth(RoleManagement);
