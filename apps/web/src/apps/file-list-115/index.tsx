@@ -18,6 +18,7 @@ import {
   PAGE_SIZE,
   ROOT_ENTRY,
   downloadFile,
+  isVideoFileName,
   previewFile,
   toBreadcrumbs,
 } from './utils';
@@ -76,6 +77,19 @@ export function FileList115() {
           }}
           onPreview={() => {
             if (item.pickCode) previewFile(item.pickCode);
+          }}
+          onVideo={() => {
+            if (!item.pickCode || !isVideoFileName(item.name)) return;
+
+            const query = new URLSearchParams({ name: item.name });
+            const currentCid = searchParams.get(CID_PARAM);
+            if (currentCid && /^\d+$/.test(currentCid)) {
+              query.set(CID_PARAM, currentCid);
+            }
+
+            setLocation(
+              `/video/115/${encodeURIComponent(item.pickCode)}?${query.toString()}`
+            );
           }}
         />
       ),

@@ -1,4 +1,5 @@
 export { Form, type FormProps } from './Form';
+export { FormAvatar, type FormAvatarProps } from './FormAvatar';
 export { FormCheckbox, type FormCheckboxProps } from './FormCheckbox';
 export {
   FormCheckboxGroup,

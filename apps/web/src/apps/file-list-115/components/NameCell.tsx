@@ -12,12 +12,14 @@ import {
   Presentation,
 } from 'lucide-react';
 import type { ItemsType } from '../types';
+import { isVideoFileName } from '../utils';
 
 export interface NameCellProps {
   item: ItemsType;
   onOpen: () => void;
   onDownload: () => void;
   onPreview?: () => void;
+  onVideo?: () => void;
 }
 
 const IMAGE_EXTENSIONS = new Set([
@@ -32,21 +34,6 @@ const IMAGE_EXTENSIONS = new Set([
   'heic',
   'ico',
   'tiff',
-]);
-
-const VIDEO_EXTENSIONS = new Set([
-  'mp4',
-  'mkv',
-  'avi',
-  'mov',
-  'wmv',
-  'flv',
-  'webm',
-  'm4v',
-  'rmvb',
-  'mpeg',
-  'mpg',
-  'ts',
 ]);
 
 const AUDIO_EXTENSIONS = new Set([
@@ -112,7 +99,6 @@ const DOCUMENT_EXTENSIONS = new Set([
 
 const PREVIEW_EXTENSIONS = new Set([
   ...IMAGE_EXTENSIONS,
-  ...VIDEO_EXTENSIONS,
   ...AUDIO_EXTENSIONS,
   'pdf',
 ]);
@@ -128,8 +114,7 @@ function FileTypeIcon({
 
   if (IMAGE_EXTENSIONS.has(extension))
     return <FileImage className={className} />;
-  if (VIDEO_EXTENSIONS.has(extension))
-    return <FileVideoCamera className={className} />;
+  if (isVideoFileName(name)) return <FileVideoCamera className={className} />;
   if (AUDIO_EXTENSIONS.has(extension))
     return <FileMusic className={className} />;
   if (ARCHIVE_EXTENSIONS.has(extension))
@@ -145,7 +130,13 @@ function FileTypeIcon({
   return <File className={className} />;
 }
 
-export function NameCell({ item, onOpen, onDownload, onPreview }: NameCellProps) {
+export function NameCell({
+  item,
+  onOpen,
+  onDownload,
+  onPreview,
+  onVideo,
+}: NameCellProps) {
   const label = <TruncatedText className="max-w-[50vw]" text={item.name} />;
 
   if (item.isDir) {
@@ -161,9 +152,9 @@ export function NameCell({ item, onOpen, onDownload, onPreview }: NameCellProps)
     );
   }
 
-  const isPreviewable = PREVIEW_EXTENSIONS.has(
-    item.name.split('.').pop()?.toLowerCase() ?? ''
-  );
+  const isPreviewable =
+    isVideoFileName(item.name) ||
+    PREVIEW_EXTENSIONS.has(item.name.split('.').pop()?.toLowerCase() ?? '');
 
   const content = (
     <>
@@ -183,7 +174,12 @@ export function NameCell({ item, onOpen, onDownload, onPreview }: NameCellProps)
     );
   }
 
-  const onClick = isPreviewable && onPreview ? onPreview : onDownload;
+  const onClick =
+    isVideoFileName(item.name) && onVideo
+      ? onVideo
+      : isPreviewable && onPreview
+        ? onPreview
+        : onDownload;
 
   return (
     <button
