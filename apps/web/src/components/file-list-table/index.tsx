@@ -39,7 +39,9 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasError, setHasError] = useState(false);
   const requestId = useRef(0);
+  const loadMoreInFlight = useRef(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const handleIntersectRef = useRef<() => void>(() => {});
 
   const hasMore = !hasError && items.length < total;
 
@@ -89,7 +91,11 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
   }, [cid, fetchPage]);
 
   const loadMore = useCallback(() => {
-    void fetchPage(cid, page + 1, true);
+    if (loadMoreInFlight.current) return;
+    loadMoreInFlight.current = true;
+    void fetchPage(cid, page + 1, true).finally(() => {
+      loadMoreInFlight.current = false;
+    });
   }, [fetchPage, cid, page]);
 
   const handleIntersect = useCallback(() => {
@@ -98,19 +104,26 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
   }, [hasMore, isLoading, isLoadingMore, loadMore]);
 
   useEffect(() => {
+    handleIntersectRef.current = handleIntersect;
+  }, [handleIntersect]);
+
+  useEffect(() => {
     const node = sentinelRef.current;
     if (!node) return;
+    const root = node.closest('[data-scroll-root]');
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) handleIntersect();
+        if (entries.some((entry) => entry.isIntersecting)) {
+          handleIntersectRef.current();
+        }
       },
-      { rootMargin: '120px' }
+      { root, rootMargin: '120px' }
     );
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [handleIntersect]);
+  }, []);
 
   const handleNavigate = useCallback(
     (index: number, entry: FileTableBreadcrumbItem) => {

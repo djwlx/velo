@@ -27,7 +27,9 @@ export function Layout({ children }: LayoutProps) {
             <Sidebar />
           </aside>
         )}
-        <div className="min-w-0 flex-1 overflow-auto">{children}</div>
+        <div data-scroll-root className="min-w-0 flex-1 overflow-auto">
+          {children}
+        </div>
       </div>
     </div>
   );

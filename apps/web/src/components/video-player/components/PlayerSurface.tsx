@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useCallback, type SyntheticEvent } from 'react';
 import { Video, VideoSkin, usePlayer } from '@videojs/react/video';
 
 import type { VideoPlayerProps } from '../types';
@@ -9,8 +10,22 @@ const surfaceStyle = {
   '--media-object-position': 'center',
 } as CSSProperties;
 
-export function PlayerSurface({ src, type, poster }: VideoPlayerProps) {
+export function PlayerSurface({
+  src,
+  type,
+  poster,
+  autoPlay = false,
+  autoFullScreen = false,
+}: VideoPlayerProps) {
   const started = usePlayer((state) => state.started);
+  const requestFullscreen = usePlayer((state) => state.requestFullscreen);
+  const shouldAutoFullScreen = autoPlay && autoFullScreen;
+  const handlePlay = useCallback(
+    (_event: SyntheticEvent<HTMLVideoElement>) => {
+      void requestFullscreen().catch(() => undefined);
+    },
+    [requestFullscreen]
+  );
 
   return (
     <VideoSkin
@@ -20,7 +35,9 @@ export function PlayerSurface({ src, type, poster }: VideoPlayerProps) {
       <Video
         className="absolute inset-0 size-full object-contain object-center"
         style={{ visibility: started ? 'visible' : 'hidden' }}
-        playsInline
+        autoPlay={autoPlay}
+        onPlay={shouldAutoFullScreen ? handlePlay : undefined}
+        playsInline={!shouldAutoFullScreen}
         preload="metadata"
         poster={poster}
         src={type ? undefined : src}

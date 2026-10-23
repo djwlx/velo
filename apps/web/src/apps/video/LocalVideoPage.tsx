@@ -29,6 +29,8 @@ function LocalVideoPage() {
             <VideoPlayer
               src={getLocalFileUrl(path)}
               type={getVideoMimeType(name)}
+              autoPlay
+              autoFullScreen
             />
           ) : (
             <p className="text-sm text-muted-foreground">

@@ -4,12 +4,24 @@ import { useVideoPoster } from '../hooks/useVideoPoster';
 import type { VideoPlayerProps } from '../types';
 import { PlayerSurface } from './PlayerSurface';
 
-export function PlayerSession({ src, type, poster }: VideoPlayerProps) {
+export function PlayerSession({
+  src,
+  type,
+  poster,
+  autoPlay,
+  autoFullScreen,
+}: VideoPlayerProps) {
   const resolvedPoster = useVideoPoster(src, type, poster);
 
   return (
     <VideoJsPlayer poster={resolvedPoster}>
-      <PlayerSurface src={src} type={type} poster={resolvedPoster} />
+      <PlayerSurface
+        src={src}
+        type={type}
+        poster={resolvedPoster}
+        autoPlay={autoPlay}
+        autoFullScreen={autoFullScreen}
+      />
     </VideoJsPlayer>
   );
 }
