@@ -13,18 +13,18 @@ const LABELS: Record<CacheStatus, string> = {
 };
 
 export interface CacheButtonProps {
-  cid?: string;
+  cids: string[];
 }
 
-export function CacheButton({ cid }: CacheButtonProps) {
+export function CacheButton({ cids }: CacheButtonProps) {
   const [status, setStatus] = useState<CacheStatus>('idle');
 
   const handleClick = async () => {
-    if (!cid) return;
+    if (cids.length === 0) return;
 
     setStatus('loading');
     try {
-      await cachePics(cid);
+      await cachePics(cids);
       setStatus('done');
     } catch {
       setStatus('error');
@@ -35,7 +35,7 @@ export function CacheButton({ cid }: CacheButtonProps) {
     <Button
       variant="outline"
       size="sm"
-      disabled={!cid || status === 'loading' || status === 'done'}
+      disabled={cids.length === 0 || status === 'loading' || status === 'done'}
       onClick={handleClick}
     >
       {status === 'loading' ? (

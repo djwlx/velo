@@ -28,8 +28,6 @@ function Pan115VideoPage() {
             <VideoPlayer
               src={getFilePreviewUrl(pickCode)}
               type={getVideoMimeType(name)}
-              autoPlay
-              autoFullScreen
             />
           ) : (
             <p className="text-sm text-muted-foreground">视频地址无效。</p>

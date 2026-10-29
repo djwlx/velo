@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { LoaderCircle } from 'lucide-react';
 
@@ -23,13 +24,30 @@ export function ProTable<T>(props: ProTableProps<T>) {
     isLoading = false,
     emptyText = '暂无数据',
     onRowClick,
+    selection,
   } = props;
+  const columnCount = columns.length + Number(Boolean(selection));
+  const allItemsSelected =
+    Boolean(selection) &&
+    items.length > 0 &&
+    items.every((item) => selection?.selectedKeys.has(selection.getKey(item)));
 
   return (
     <div className={cn('flex-1', className)} role="region">
       <Table>
         <TableHeader>
           <TableRow>
+            {selection ? (
+              <TableHead className="sticky top-0 w-10 bg-muted">
+                <Checkbox
+                  aria-label="全选当前列表"
+                  checked={allItemsSelected}
+                  onCheckedChange={(checked) =>
+                    selection.onSelectAll(items, checked)
+                  }
+                />
+              </TableHead>
+            ) : null}
             {columns.map((column) => (
               <TableHead
                 key={column.key}
@@ -44,7 +62,7 @@ export function ProTable<T>(props: ProTableProps<T>) {
           {isLoading ? (
             <TableRow className="hover:bg-transparent">
               <TableCell
-                colSpan={columns.length}
+                colSpan={columnCount}
                 className="h-24 text-center text-muted-foreground"
               >
                 <LoaderCircle className="mx-auto size-5 animate-spin" />
@@ -54,7 +72,7 @@ export function ProTable<T>(props: ProTableProps<T>) {
           {!isLoading && items.length === 0 ? (
             <TableRow className="hover:bg-transparent">
               <TableCell
-                colSpan={columns.length}
+                colSpan={columnCount}
                 className="h-24 text-center text-muted-foreground"
               >
                 {emptyText}
@@ -78,7 +96,7 @@ export function ProTable<T>(props: ProTableProps<T>) {
                           const target = event.target as HTMLElement;
                           if (
                             target.closest(
-                              'button, a, input, select, textarea, [role="button"]'
+                              'button, a, input, select, textarea, [role="button"], [role="checkbox"]'
                             )
                           ) {
                             return;
@@ -88,6 +106,22 @@ export function ProTable<T>(props: ProTableProps<T>) {
                       : undefined
                   }
                 >
+                  {selection ? (
+                    <TableCell
+                      className="w-10"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <Checkbox
+                        aria-label="选择此行"
+                        checked={selection.selectedKeys.has(
+                          selection.getKey(item)
+                        )}
+                        onCheckedChange={(checked) =>
+                          selection.onChange(item, checked === true)
+                        }
+                      />
+                    </TableCell>
+                  ) : null}
                   {columns.map((column) => {
                     const rowCellKey = `${dataRowKey}-${column.key}`;
 

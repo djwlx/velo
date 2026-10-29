@@ -11,6 +11,7 @@ export type {
   FileListTableLoadParams,
   FileListTableLoadResult,
   FileListTableProps,
+  FileListTableSelection,
 } from './types';
 export type {
   FileTableBreadcrumbItem,
@@ -39,12 +40,51 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<Map<string, T>>(
+    () => new Map()
+  );
   const requestId = useRef(0);
   const loadMoreInFlight = useRef(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const handleIntersectRef = useRef<() => void>(() => {});
 
   const hasMore = !hasError && items.length < total;
+  const selectedKeys = new Set(selectedItems.keys());
+
+  useEffect(() => {
+    setSelectedItems(new Map());
+  }, [cid]);
+
+  const handleSelectionChange = useCallback(
+    (item: T, selected: boolean) => {
+      if (!props.selection) return;
+      const key = props.selection.getKey(item);
+      setSelectedItems((current) => {
+        const next = new Map(current);
+        if (selected) next.set(key, item);
+        else next.delete(key);
+        return next;
+      });
+    },
+    [props.selection]
+  );
+
+  const handleSelectAll = useCallback(
+    (currentItems: readonly T[], selected: boolean) => {
+      if (!props.selection) return;
+      const getKey = props.selection.getKey;
+      setSelectedItems((current) => {
+        const next = new Map(current);
+        for (const item of currentItems) {
+          const key = getKey(item);
+          if (selected) next.set(key, item);
+          else next.delete(key);
+        }
+        return next;
+      });
+    },
+    [props.selection]
+  );
 
   const fetchPage = useCallback(
     async (targetCid: string, nextPage: number, append: boolean) => {
@@ -159,12 +199,30 @@ export function FileListTable<T>(props: FileListTableProps<T>) {
         isLoading={isLoading}
         footer={infiniteFooter}
         onRowClick={onRowClick}
+        selection={
+          props.selection
+            ? {
+                selectedKeys,
+                getKey: props.selection.getKey,
+                onChange: handleSelectionChange,
+                onSelectAll: handleSelectAll,
+              }
+            : undefined
+        }
         emptyText={
           hasError
             ? '文件列表加载失败，请刷新重试'
             : (emptyText ?? '文件夹为空')
         }
       />
+      {props.selection && selectedItems.size > 0 ? (
+        <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
+          <div className="pointer-events-auto flex items-center gap-3 rounded-xl border bg-popover px-4 py-3 text-popover-foreground shadow-lg">
+            <span className="text-sm">已选 {selectedItems.size} 项</span>
+            {props.selection.renderActions([...selectedItems.values()])}
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

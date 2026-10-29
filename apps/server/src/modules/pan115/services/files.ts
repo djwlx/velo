@@ -36,6 +36,7 @@ export const getFiles: Handler<Pan115Env> = async (c) => {
     const result = await sdk.getFileList(offset, pageSize, cid);
 
     const items = result.data.map((item) => ({
+      id: item.fid ?? item.cid,
       cid: item.cid,
       name: item.n,
       pickCode: item.pc || null,

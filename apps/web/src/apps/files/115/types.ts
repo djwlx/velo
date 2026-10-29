@@ -3,6 +3,7 @@ export interface BreadcrumbEntry {
   name: string;
 }
 export interface ItemsType {
+  id: string;
   name: string;
   size?: number;
   isDir: boolean;

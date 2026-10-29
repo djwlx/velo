@@ -51,16 +51,26 @@ export const getFileDownloadUrl = (pickCode: string): string => {
   return `${API_BASE_URL}/115/file/${encodeURIComponent(normalizedPickCode)}`;
 };
 
-export const cachePics = (cid: string) => {
-  const normalizedCid = cid.trim();
-  if (!/^\d+$/.test(normalizedCid)) {
-    throw new TypeError('cid must contain only digits');
+export const cachePics = (cids: string[]) => {
+  if (!Array.isArray(cids)) {
+    throw new TypeError('cids must be an array');
+  }
+  if (cids.some((cid) => typeof cid !== 'string')) {
+    throw new TypeError('cids must contain only strings');
+  }
+  const normalizedCids = [...new Set(cids.map((cid) => cid.trim()))];
+  if (
+    normalizedCids.length === 0 ||
+    normalizedCids.length > 100 ||
+    normalizedCids.some((cid) => !/^\d{1,64}$/.test(cid))
+  ) {
+    throw new TypeError('cids must contain 1 to 100 numeric ids');
   }
 
-  return request<{ cid: string; started: boolean }>('/115/pic/cache', {
+  return request<{ cids: string[]; started: boolean }>('/115/pic/cache', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cid: normalizedCid }),
+    body: JSON.stringify({ cid: normalizedCids }),
   });
 };
 

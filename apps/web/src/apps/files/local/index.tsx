@@ -2,6 +2,7 @@ import type { ManagedFile } from '@velo/shared';
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'wouter';
 
+import { FileName } from '@/apps/files/components/file-name';
 import {
   FileListTable,
   type FileListTableColumn,
@@ -18,7 +19,6 @@ import { isAndroid } from '@/utils/device';
 import { openInMxPlayer } from '@/utils/external-player';
 import { formatFileSize } from '@/utils/file';
 import { isVideoFileName } from '@/apps/video/utils';
-import { FileEntryName } from './components/FileEntryName';
 import { getLocalDirectoryLocation } from './utils';
 
 function FileListLocal() {
@@ -70,7 +70,13 @@ function FileListLocal() {
       title: '名称',
       className: 'w-full',
       render: (_value, item) => (
-        <FileEntryName item={item} onOpen={() => openEntry(item)} />
+        <FileName
+          name={item.name}
+          isDirectory={item.isDirectory}
+          onActivate={() => openEntry(item)}
+          className="text-primary"
+          iconClassName={item.isDirectory ? undefined : 'text-primary'}
+        />
       ),
     },
     {

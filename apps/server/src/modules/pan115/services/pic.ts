@@ -67,37 +67,53 @@ export const cacheFileIdInDB: Handler<Pan115Env> = async (c) => {
   }
 
   const cookie = c.get('cookie115');
-  const body = await c.req.json<{ cid?: string; delayMs?: number }>();
-  const cid = body.cid;
-  if (!cid) return c.json(fail('cidRequired', ErrorCode.ValidationFailed), 400);
-  const delayMs = body.delayMs ?? 500;
+  const body = await c.req.json<unknown>();
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return c.json(fail('invalidRequest', ErrorCode.InvalidRequest), 400);
+  }
+  const payload = body as { cid?: unknown; delayMs?: unknown };
+  const rawCids = Array.isArray(payload.cid) ? payload.cid : [payload.cid];
+  const validCids = rawCids.filter(
+    (cid): cid is string =>
+      typeof cid === 'string' && /^\d{1,64}$/.test(cid.trim()),
+  );
+  if (rawCids.length === 0 || rawCids.length > 100 || validCids.length !== rawCids.length) {
+    return c.json(fail('invalidRequest', ErrorCode.InvalidRequest), 400);
+  }
+  const cids = [...new Set(validCids.map((cid) => cid.trim()))];
+  const delayMs = payload.delayMs ?? 500;
+  if (typeof delayMs !== 'number' || !Number.isInteger(delayMs) || delayMs < 0 || delayMs > 5000) {
+    return c.json(fail('invalidRequest', ErrorCode.InvalidRequest), 400);
+  }
   const client115 = new Pan115Sdk(cookie);
 
   let total = 0;
   void runExclusive(async () => {
     try {
-      await fetchRecursively(
-        client115,
-        cid,
-        ({ parentCid, items }) => {
-          const pics = items.filter((item) => item.class === 'PIC' && item.pc);
-          const rows = pics.map(({ pc, class: fileClass }) => ({
-            pc_code: pc,
-            class: fileClass,
-            cid: parentCid,
-          }));
-          total += rows.length;
-          bulkInsertPics(rows);
-        },
-        { delayMs },
-      );
-      rootLogger.info({ cid, total }, 'cache 115 files done');
+      for (const cid of cids) {
+        await fetchRecursively(
+          client115,
+          cid,
+          ({ parentCid, items }) => {
+            const pics = items.filter((item) => item.class === 'PIC' && item.pc);
+            const rows = pics.map(({ pc, class: fileClass }) => ({
+              pc_code: pc,
+              class: fileClass,
+              cid: parentCid,
+            }));
+            total += rows.length;
+            bulkInsertPics(rows);
+          },
+          { delayMs },
+        );
+      }
+      rootLogger.info({ cidCount: cids.length, total }, 'cache 115 files done');
     } catch (error) {
-      rootLogger.error({ err: error, cid }, 'cache 115 files failed');
+      rootLogger.error({ err: error, cidCount: cids.length }, 'cache 115 files failed');
     }
   }, PIC_CACHE_LOCK_KEY);
 
-  return c.json(success({ cid, started: true }));
+  return c.json(success({ cids, started: true }));
 };
 
 export const clearPicsHandler: Handler<Pan115Env> = (c) => {

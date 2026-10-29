@@ -15,6 +15,11 @@ export interface FileListTableLoadResult<T> {
   path?: FileTableBreadcrumbItem[];
 }
 
+export interface FileListTableSelection<T> {
+  getKey: (item: T) => string;
+  renderActions: (selectedItems: readonly T[]) => ReactNode;
+}
+
 export interface FileListTableProps<T> extends Pick<
   ProTableProps<T>,
   'className' | 'columns' | 'rowKey' | 'onRowClick'
@@ -26,6 +31,7 @@ export interface FileListTableProps<T> extends Pick<
   ) => Promise<FileListTableLoadResult<T>>;
   pageSize?: number;
   emptyText?: ReactNode;
+  selection?: FileListTableSelection<T>;
 }
 
 export interface FileListTableColumn<T> extends ProTableColumn<T> {}

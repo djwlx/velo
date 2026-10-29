@@ -1,4 +1,9 @@
 import {
+  FileName,
+  isPreviewableFileName,
+} from '@/apps/files/components/file-name';
+import { CacheButton } from './components/CacheButton';
+import {
   FileListTable,
   type FileListTableColumn,
   type FileListTableLoadParams,
@@ -12,7 +17,6 @@ import { formatFileSize } from '@/utils/file';
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'wouter';
 import { getFileDirectoryLocation } from '../utils';
-import { NameCell, isPreviewableFileName } from './components/NameCell';
 import type { ItemsType } from './types';
 import {
   PAGE_SIZE,
@@ -91,6 +95,7 @@ function FileList115() {
 
       return {
         items: res.data.items.map<ItemsType>((item) => ({
+          id: item.id,
           name: item.name,
           isDir: item.isDirectory,
           cid: item.cid,
@@ -111,7 +116,13 @@ function FileList115() {
       title: '名称',
       className: 'w-full',
       render: (_value, item) => (
-        <NameCell item={item} onActivate={() => activate(item)} />
+        <FileName
+          name={item.name}
+          isDirectory={item.isDir}
+          onActivate={
+            item.isDir || item.pickCode ? () => activate(item) : undefined
+          }
+        />
       ),
     },
     {
@@ -136,6 +147,23 @@ function FileList115() {
           loadPage={loadPage}
           pageSize={PAGE_SIZE}
           onRowClick={activate}
+          selection={{
+            getKey: (item) => item.id,
+            renderActions: (selectedItems) => {
+              const allFolders = selectedItems.every(
+                (item) => item.isDir && item.cid && /^\d+$/.test(item.cid)
+              );
+
+              if (!allFolders) return null;
+
+              return (
+                <CacheButton
+                  key={selectedItems.map((item) => item.cid).join(',')}
+                  cids={selectedItems.map((item) => item.cid ?? '')}
+                />
+              );
+            },
+          }}
           onNavigate={(entry) =>
             entry.cid === '/' ? setLocation('/files') : navigate(entry.cid)
           }

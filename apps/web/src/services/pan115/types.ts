@@ -1,4 +1,5 @@
 export interface Pan115FileItem {
+  id: string;
   cid: string;
   name: string;
   pickCode: string | null;
