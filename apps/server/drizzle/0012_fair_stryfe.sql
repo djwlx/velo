@@ -1,0 +1,1 @@
+DROP TABLE `velo_files_local_entries`;

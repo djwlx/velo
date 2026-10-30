@@ -43,11 +43,20 @@ pnpm dev --filter=@velo/server
 - `pnpm check-types`: type-check all apps
 - `pnpm format`: format all apps (oxfmt)
 
+## Release
+
+Run `./scripts/release.mjs` from a clean working tree to fetch tags, increment the root
+package's patch version, and push a new `v` tag to `origin`. The release workflow
+builds from that tag and updates package versions.
+
 ## Server
 
 Copy `apps/server/.env.example` to `apps/server/.env` and set `APP_SECRET`.
 
 ```sh
-pnpm --filter=@velo/server db:migrate
+pnpm run init
 pnpm --filter=@velo/server dev
 ```
+
+`pnpm run init` creates `apps/server/data/uploads`, `files`, and `logs`, then
+applies pending database migrations.

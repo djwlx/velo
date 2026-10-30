@@ -33,10 +33,8 @@ Paths are relative to the local files root. Traversal and symbolic links are rej
 Supported media can be previewed; other file types are downloaded as attachments.
 No endpoint writes to or deletes files in this directory.
 
-The legacy local-file mapping table remains in the database for compatibility with
-existing migrations. Local file listing and video links no longer add mapping rows.
-Apply database migrations with `pnpm run db:migrate` before starting an updated
-server.
+The obsolete local-file mapping table is removed by the latest database migration.
+Apply database migrations with `pnpm run db:migrate` before starting an updated server.
 
 ## Permissions
 
