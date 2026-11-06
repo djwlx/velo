@@ -51,6 +51,27 @@ export const getFileDownloadUrl = (pickCode: string): string => {
   return `${API_BASE_URL}/115/file/${encodeURIComponent(normalizedPickCode)}`;
 };
 
+export const get115AccountStatus = () =>
+  request<{
+    bound: boolean;
+    profile: { userName: string; avatarUrl: string | null } | null;
+    profileAvailable: boolean;
+  }>('/115/account');
+
+export const start115QrLogin = () =>
+  request<{ sessionId: string; imageDataUrl: string; expiresAt: number }>(
+    '/115/account/login/qr',
+    { method: 'POST' }
+  );
+
+export const poll115QrLogin = (sessionId: string) =>
+  request<{
+    status: 'waiting' | 'scanned' | 'authorized' | 'expired' | 'failed';
+  }>(`/115/account/login/qr/${encodeURIComponent(sessionId)}`);
+
+export const remove115Account = () =>
+  request<{ bound: false }>('/115/account', { method: 'DELETE' });
+
 export const cachePics = (cids: string[]) => {
   if (!Array.isArray(cids)) {
     throw new TypeError('cids must be an array');

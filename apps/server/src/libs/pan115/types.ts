@@ -1,3 +1,11 @@
+import { z } from 'zod';
+
+export interface RequestOptions {
+  withCookie?: boolean;
+  timeoutMs?: number;
+  accept?: string;
+}
+
 export type FileItem = {
   fid: string;
   uid: number;
@@ -162,3 +170,65 @@ export type FileInfo = {
   url: string;
   mime: string;
 };
+
+export const qrTokenResponseSchema = z.object({
+  state: z.union([z.boolean(), z.number()]).optional(),
+  code: z.number().int(),
+  message: z.string(),
+  data: z.object({
+    uid: z.string().min(1).max(128),
+    time: z.coerce.number().int().positive(),
+    sign: z.string().min(1).max(512),
+    qrcode: z.string().url(),
+  }),
+});
+
+export const qrStatusResponseSchema = z.object({
+  state: z.union([z.boolean(), z.number()]).optional(),
+  data: z.object({ status: z.number().int() }),
+});
+
+export const qrLoginResponseSchema = z.object({
+  state: z.union([z.boolean(), z.number()]).optional(),
+  data: z.object({
+    cookie: z.record(z.string(), z.union([z.string(), z.number()])),
+  }),
+});
+
+export const userInfoResponseSchema = z.object({
+  state: z.union([z.boolean(), z.number()]).optional(),
+  data: z
+    .object({
+      device: z.number().int().optional(),
+      rank: z.number().int().optional(),
+      liang: z.number().int().optional(),
+      mark: z.number().int().optional(),
+      mark1: z.number().int().optional(),
+      mark3: z.number().int().optional(),
+      vip: z.number().int().optional(),
+      expire: z.number().int().optional(),
+      global: z.number().int().optional(),
+      forever: z.number().int().optional(),
+      is_privilege: z.boolean().optional(),
+      privilege: z
+        .object({
+          start: z.number().int().optional(),
+          expire: z.number().int().optional(),
+          state: z.boolean().optional(),
+          mark: z.number().int().optional(),
+        })
+        .optional(),
+      user_name: z.string().max(128).optional(),
+      face: z.string().max(2048).optional(),
+      user_id: z.number().int().optional(),
+      display_uid: z.string().max(128).optional(),
+      forever_name: z.string().max(128).optional(),
+    })
+    .passthrough()
+    .nullable()
+    .optional(),
+});
+
+export type QrTokenResponse = z.infer<typeof qrTokenResponseSchema>;
+export type QrLoginToken = Omit<QrTokenResponse['data'], 'qrcode'>;
+export type UserInfoResponse = z.infer<typeof userInfoResponseSchema>;

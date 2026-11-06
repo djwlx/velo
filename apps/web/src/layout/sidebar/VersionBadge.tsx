@@ -8,7 +8,7 @@ export function VersionBadge() {
   if (!version) return null;
 
   return (
-    <div className="px-3 py-2 text-center text-xs text-muted-foreground">
+    <div className="mt-auto border-t border-sidebar-border px-3 pt-4 text-center text-xs text-muted-foreground">
       v{version}
     </div>
   );

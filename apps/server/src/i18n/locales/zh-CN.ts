@@ -40,5 +40,8 @@ export const zhCN = {
   picCacheRunning: '图片缓存任务正在运行',
   cidRequired: 'cid 不能为空',
   cookie115Missing: '未配置 115 Cookie',
+  qrLoginSessionLimit: '正在进行扫码授权，请稍后重试',
+  qrLoginUnavailable: '暂时无法生成 115 登录二维码，请稍后重试',
+  invalidQrLoginSession: '扫码授权会话无效',
   internalError: '服务器内部错误',
 } as const;

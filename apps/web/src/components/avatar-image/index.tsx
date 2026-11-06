@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 
 import { downloadFile } from '@/services/file';
 
@@ -7,6 +7,7 @@ interface AvatarImageProps {
   alt: string;
   className: string;
   fallback: ReactNode;
+  style?: CSSProperties;
 }
 
 export function AvatarImage({
@@ -14,6 +15,7 @@ export function AvatarImage({
   alt,
   className,
   fallback,
+  style,
 }: AvatarImageProps) {
   const [resolvedSrc, setResolvedSrc] = useState<string | null>(null);
 
@@ -58,7 +60,7 @@ export function AvatarImage({
   }, [src]);
 
   return resolvedSrc ? (
-    <img src={resolvedSrc} alt={alt} className={className} />
+    <img src={resolvedSrc} alt={alt} className={className} style={style} />
   ) : (
     fallback
   );

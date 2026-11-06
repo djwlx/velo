@@ -14,6 +14,8 @@ import VideoPage from './apps/video';
 
 const Setting = lazy(() => import('./apps/setting'));
 const RoleManagement = lazy(() => import('./apps/setting/roles'));
+const AccountConfig = lazy(() => import('./apps/setting/accounts'));
+const AdminDashboard = lazy(() => import('./apps/setting/dashboard'));
 const UserInfo = lazy(() => import('./apps/setting/user'));
 const UserManagement = lazy(() => import('./apps/setting/users'));
 
@@ -39,6 +41,8 @@ function App() {
             <Route path="/files/115" component={FileList115} />
             <Route path="/video" component={VideoPage} />
             <Route path="/setting/users" component={UserManagement} />
+            <Route path="/setting/dashboard" component={AdminDashboard} />
+            <Route path="/setting/accounts" component={AccountConfig} />
             <Route path="/setting/roles" component={RoleManagement} />
             <Route path="/setting/me" component={UserInfo} />
             <Route path="/setting" component={Setting} />

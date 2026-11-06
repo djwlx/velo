@@ -4,16 +4,17 @@ import { Writable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 
 import pino from 'pino';
+import type { LoggerOptions } from 'pino';
+
+import { formatLocalDate, formatLocalDateTime } from '../utils/time.js';
 
 const LOG_DIRECTORY = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../data/logs');
 
 type DailyLogType = 'info' | 'error';
 
-function getLocalDate(): string {
+function getLogTimestamp(): string {
   const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${now.getFullYear()}-${month}-${day}`;
+  return `,"time":"${formatLocalDateTime(now)}","timeMs":${now.getTime()}`;
 }
 
 class DailyLogStream extends Writable {
@@ -36,19 +37,25 @@ class DailyLogStream extends Writable {
       callback(new Error('Invalid structured log record'));
       return;
     }
-    if (typeof level !== 'number' || (this.type === 'info' ? level > 30 : level <= 30)) {
+    const isInfoLevel = level === 'trace' || level === 'debug' || level === 'info';
+    const isErrorLevel = level === 'warn' || level === 'error' || level === 'fatal';
+    if (this.type === 'info' ? !isInfoLevel : !isErrorLevel) {
       callback();
       return;
     }
 
-    const filename = path.join(LOG_DIRECTORY, `${getLocalDate()}.${this.type}.log`);
+    const filename = path.join(LOG_DIRECTORY, `${formatLocalDate()}.${this.type}.log`);
     appendFile(filename, chunk, { mode: 0o600 }, callback);
   }
 }
 
 function createLogger() {
-  const loggerOptions = {
+  const loggerOptions: LoggerOptions = {
     level: 'trace',
+    timestamp: getLogTimestamp,
+    formatters: {
+      level: (label: string) => ({ level: label }),
+    },
     hooks: {
       streamWrite: (log: string) => `${log}\n`,
     },

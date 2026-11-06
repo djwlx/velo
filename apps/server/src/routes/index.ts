@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { authMiddleware } from '../middleware/auth.js';
 import { authRoute } from '../modules/auth/route.js';
 import { configRoute } from '../modules/config/route.js';
+import { dashboardRoute } from '../modules/dashboard/route.js';
 import { filesRoute } from '../modules/files/route.js';
 import { pan115Route } from '../modules/pan115/route.js';
 
@@ -11,4 +12,5 @@ api.use('*', authMiddleware);
 api.route('/auth', authRoute);
 api.route('/115', pan115Route);
 api.route('/config', configRoute);
+api.route('/dashboard', dashboardRoute);
 api.route('/files', filesRoute);

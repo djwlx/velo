@@ -23,7 +23,7 @@ export function Layout({ children }: LayoutProps) {
       <Header />
       <div className="flex min-h-0 min-w-0 flex-1">
         {showSidebar && (
-          <aside className="hidden w-64 shrink-0 overflow-y-auto border-r md:block">
+          <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-sidebar-border bg-sidebar md:block">
             <Sidebar />
           </aside>
         )}

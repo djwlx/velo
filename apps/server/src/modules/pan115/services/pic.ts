@@ -7,6 +7,9 @@ import { Pan115Sdk } from '../../../libs/pan115/index.js';
 import { randomInt } from '../../../utils/number.js';
 import { fail, success } from '../../../utils/response.js';
 import { buildContentDisposition, escapeHtml } from '../../../utils/string.js';
+import { formatLocalDate } from '../../../utils/time.js';
+import { RANDOM_PIC_ACCESS_METRIC } from '../../statistics/metrics.js';
+import { incrementDailyStatistic } from '../../statistics/repository.js';
 import { bulkInsertPics, clearAllPics, getPicByIndex, getPicCount } from '../repositories/pic.js';
 import type { Pan115Env } from '../types.js';
 import { fetchRecursively } from '../utils.js';
@@ -31,12 +34,14 @@ export const getRandomPic: Handler<Pan115Env> = async (c) => {
 
   const fileInfo = await client115.getFile(pic.pc_code);
   if (isModeJson) {
+    incrementDailyStatistic(RANDOM_PIC_ACCESS_METRIC, formatLocalDate());
     return c.json(success(fileInfo));
   }
 
   if (isModeHtml) {
     const url = escapeHtml(fileInfo.url);
     const name = escapeHtml(fileInfo.file_name);
+    incrementDailyStatistic(RANDOM_PIC_ACCESS_METRIC, formatLocalDate());
     return c.html(
       `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${name}</title></head><body style="margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#000"><img src="${url}" alt="${name}" style="max-width:100%;max-height:100vh"></body></html>`,
     );
@@ -51,6 +56,7 @@ export const getRandomPic: Handler<Pan115Env> = async (c) => {
   if (!res.ok || !res.body) {
     throw new Error(`download failed: ${res.status}`);
   }
+  incrementDailyStatistic(RANDOM_PIC_ACCESS_METRIC, formatLocalDate());
   return new Response(res.body, {
     status: res.status,
     headers: {
@@ -74,8 +80,7 @@ export const cacheFileIdInDB: Handler<Pan115Env> = async (c) => {
   const payload = body as { cid?: unknown; delayMs?: unknown };
   const rawCids = Array.isArray(payload.cid) ? payload.cid : [payload.cid];
   const validCids = rawCids.filter(
-    (cid): cid is string =>
-      typeof cid === 'string' && /^\d{1,64}$/.test(cid.trim()),
+    (cid): cid is string => typeof cid === 'string' && /^\d{1,64}$/.test(cid.trim()),
   );
   if (rawCids.length === 0 || rawCids.length > 100 || validCids.length !== rawCids.length) {
     return c.json(fail('invalidRequest', ErrorCode.InvalidRequest), 400);

@@ -1,4 +1,10 @@
-import { ShieldCheck, UserCircle, Users } from 'lucide-react';
+import {
+  Cloud,
+  LayoutDashboard,
+  ShieldCheck,
+  UserCircle,
+  Users,
+} from 'lucide-react';
 import type { SidebarSection } from '../types';
 
 export const settingSidebarConfig: SidebarSection[] = [
@@ -10,6 +16,8 @@ export const settingSidebarConfig: SidebarSection[] = [
     title: '管理员设置',
     roles: ['admin'],
     items: [
+      { href: '/setting/dashboard', label: '仪表盘', icon: LayoutDashboard },
+      { href: '/setting/accounts', label: '账户配置', icon: Cloud },
       { href: '/setting/users', label: '用户管理', icon: Users },
       { href: '/setting/roles', label: '角色管理', icon: ShieldCheck },
     ],
