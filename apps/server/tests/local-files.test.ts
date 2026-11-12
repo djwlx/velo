@@ -14,7 +14,6 @@ import { Hono } from 'hono';
 import pino from 'pino';
 
 const originalDirectory = process.cwd();
-const originalSecret = process.env.APP_SECRET;
 const migrationsFolder = fileURLToPath(new URL('../drizzle', import.meta.url));
 const content = Buffer.from('0123456789abcdef');
 let temporaryDirectory: string;
@@ -43,7 +42,11 @@ before(async () => {
   );
 
   process.chdir(temporaryDirectory);
-  process.env.APP_SECRET = randomBytes(32).toString('hex');
+  await writeFile(
+    path.join(temporaryDirectory, 'data/app-secret'),
+    randomBytes(32).toString('hex'),
+    { mode: 0o600 },
+  );
   const sqlite = new Database(path.join(temporaryDirectory, 'data', 'index.db'));
   migrate(drizzle(sqlite), { migrationsFolder });
   sqlite.close();
@@ -73,8 +76,6 @@ before(async () => {
 after(async () => {
   closeDatabase?.();
   process.chdir(originalDirectory);
-  if (originalSecret === undefined) delete process.env.APP_SECRET;
-  else process.env.APP_SECRET = originalSecret;
   if (temporaryDirectory) await rm(temporaryDirectory, { recursive: true, force: true });
 });
 
@@ -130,6 +131,40 @@ test('lists real files and subdirectories, paginates, and supports Unicode names
     `/api/files/local/content?path=${encodeURIComponent(nested.items[0].path)}`,
   );
   assert.equal(await response.text(), 'nested');
+});
+
+test('an operator-mapped root supports listing and streaming while rejecting child links and traversal', async () => {
+  const backing = `${filesDirectory}-mapped`;
+  await rename(filesDirectory, backing);
+  try {
+    await symlink(backing, filesDirectory);
+    const root = await list();
+    assert.equal(root.total, 3);
+    assert.equal(root.items.find((item) => item.name === 'movie.mp4')?.size, content.length);
+    const nested = await list('目录 空格');
+    const response = await request(
+      `/api/files/local/content?path=${encodeURIComponent(nested.items[0].path)}`,
+    );
+    assert.equal(await response.text(), 'nested');
+    const range = await request('/api/files/local/content?path=movie.mp4', {
+      headers: { Range: 'bytes=2-5' },
+    });
+    assert.equal(range.status, 206);
+    assert.equal(await range.text(), content.subarray(2, 6).toString());
+    for (const relative of ['link.txt', 'internal-link.mp4', 'linked-directory/private.txt']) {
+      assert.equal(
+        (await request(`/api/files/local/content?path=${encodeURIComponent(relative)}`)).status,
+        403,
+      );
+    }
+    assert.equal((await request('/api/files/local?path=..')).status, 400);
+    assert.equal((await request('/api/files/local')).status, 200);
+    assert.equal((await app.request('/api/files/local')).status, 401);
+    assert.equal((await request('/api/files/local', {}, userToken)).status, 403);
+  } finally {
+    await rm(filesDirectory, { force: true });
+    await rename(backing, filesDirectory);
+  }
 });
 
 test('local listings use their relative paths without creating string mappings', async () => {

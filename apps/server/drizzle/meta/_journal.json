@@ -99,6 +99,13 @@
       "when": 1793951589048,
       "tag": "0013_statistics_daily",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1794464216745,
+      "tag": "0014_app_migrations",
+      "breakpoints": true
     }
   ]
 }

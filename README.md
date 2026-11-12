@@ -13,7 +13,13 @@ Turborepo monorepo for the Velo project.
 
 ## Environment
 
-Node version is pinned in the root `.nvmrc`.
+Node version is pinned in the root `.nvmrc`; pnpm is pinned in `package.json`.
+
+```sh
+nvm install
+nvm use
+npm install --global pnpm@12.18.0
+```
 
 ## Development
 
@@ -51,12 +57,22 @@ builds from that tag and updates package versions.
 
 ## Server
 
-Copy `apps/server/.env.example` to `apps/server/.env` and set `APP_SECRET`.
+Start the server without creating an env file:
 
 ```sh
-pnpm run init
-pnpm --filter=@velo/server dev
+pnpm dev --filter=@velo/server
 ```
 
-`pnpm run init` creates `apps/server/data/uploads`, `files`, and `logs`, then
-applies pending database migrations.
+Startup prepares the data directories, applies database and application migrations,
+and then starts the HTTP server. New installations generate a private key in
+`apps/server/data/app-secret` automatically.
+
+The server reads its key exclusively from `data/app-secret`; environment variables
+and `.env` files are not used for the key. Existing persisted keys are reused
+without modification. Back up the entire `data` directory, including `app-secret`,
+together with the database. If the key is missing from an existing installation,
+restore it from backup.
+
+To prepare data and run migrations without starting HTTP, use
+`pnpm --filter @velo/server migrate`. See
+[server migration instructions](apps/server/README.md#application-migrations).

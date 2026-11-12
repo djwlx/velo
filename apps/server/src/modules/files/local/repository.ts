@@ -35,17 +35,19 @@ export function createLocalFileStore(directory = LOCAL_FILES_DIRECTORY) {
     const parsed = localPathSchema.safeParse(relativePath);
     if (!parsed.success) throw new LocalFileError(400);
 
-    const rootInfo = await lstat(root);
-    if (rootInfo.isSymbolicLink() || !rootInfo.isDirectory()) throw new LocalFileError(403);
+    // Resolve the operator-configured root once, then use its canonical path
+    // throughout this operation. Child symlinks remain forbidden.
     const canonicalRoot = await realpath(root);
-    let target = root;
+    const rootInfo = await lstat(canonicalRoot);
+    if (rootInfo.isSymbolicLink() || !rootInfo.isDirectory()) throw new LocalFileError(403);
+    let target = canonicalRoot;
     let metadata = rootInfo;
     for (const segment of relativePath ? relativePath.split('/') : []) {
       target = path.join(target, segment);
       metadata = await lstat(target);
       if (metadata.isSymbolicLink()) throw new LocalFileError(403);
     }
-    if (!isWithin(root, target) || !isWithin(canonicalRoot, await realpath(target))) {
+    if (!isWithin(canonicalRoot, target) || !isWithin(canonicalRoot, await realpath(target))) {
       throw new LocalFileError(403);
     }
     return { target, metadata };

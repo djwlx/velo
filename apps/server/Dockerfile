@@ -5,19 +5,19 @@
 #   mkdir -p apps/server/public && cp -R apps/web/dist/. apps/server/public/
 #   docker build -f apps/server/Dockerfile -t velo .
 
-FROM node:24-alpine AS build
+FROM node:26.13.1-alpine AS build
 
 WORKDIR /repo
 
 RUN apk add --no-cache python3 make g++
-RUN corepack enable
 
 # Install workspace dependencies (manifests first for better caching)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/server/package.json apps/server/package.json
 COPY apps/web/package.json apps/web/package.json
 COPY packages/shared/package.json packages/shared/package.json
-RUN pnpm install --frozen-lockfile
+RUN npm install --global "$(node -p "require('./package.json').packageManager")" \
+  && pnpm install --frozen-lockfile
 
 # Build shared + server, then produce a self-contained deploy dir
 COPY . .
@@ -25,7 +25,7 @@ RUN pnpm --filter @velo/server... build \
   && pnpm --filter @velo/server deploy --prod --legacy /out \
   && if [ -d apps/server/public ]; then cp -R apps/server/public /out/public; fi
 
-FROM node:24-alpine AS runtime
+FROM node:26.13.1-alpine AS runtime
 
 WORKDIR /app
 
@@ -39,4 +39,4 @@ VOLUME ["/app/data"]
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "mkdir -p data && npm run db:migrate && { [ -f data/.env ] && node --env-file=data/.env dist/index.js || node dist/index.js; }"]
+CMD ["node", "dist/bootstrap.js"]

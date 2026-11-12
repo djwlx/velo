@@ -11,8 +11,6 @@ import {
 import { Card } from '@/components/ui/card';
 import { withAuth } from '@/components/permission';
 import { getFileList } from '@/services/pan115';
-import { isAndroid } from '@/utils/device';
-import { openInMxPlayer } from '@/utils/external-player';
 import { formatFileSize } from '@/utils/file';
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'wouter';
@@ -22,7 +20,6 @@ import {
   PAGE_SIZE,
   ROOT_ENTRY,
   downloadFile,
-  getFilePreviewUrl,
   isVideoFileName,
   previewFile,
   toBreadcrumbs,
@@ -56,14 +53,6 @@ function FileList115() {
       }
 
       const videoPath = `/video?${query.toString()}`;
-
-      if (isAndroid()) {
-        openInMxPlayer(getFilePreviewUrl(item.pickCode), {
-          title: item.name,
-          fallbackUrl: new URL(videoPath, window.location.origin).toString(),
-        });
-        return;
-      }
 
       setLocation(videoPath);
     },
