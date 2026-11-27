@@ -106,6 +106,13 @@
       "when": 1794464216745,
       "tag": "0014_app_migrations",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1795785783925,
+      "tag": "0015_thin_red_ghost",
+      "breakpoints": true
     }
   ]
 }

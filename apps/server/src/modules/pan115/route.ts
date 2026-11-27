@@ -10,6 +10,7 @@ import {
 } from './services/account.js';
 import { getFile, getFiles } from './services/files.js';
 import { cacheFileIdInDB, clearPicsHandler, getRandomPic } from './services/pic.js';
+import { cacheVideoFileIdInDB, clearVideosHandler, getRandomVideo } from './services/video.js';
 import type { Pan115Env } from './types.js';
 
 export const pan115Route = new Hono<Pan115Env>();
@@ -25,6 +26,7 @@ pan115Route.route('/account', accountRoute);
 pan115Route.use(injectCookie);
 
 pan115Route.get('/pic/random', getRandomPic);
+pan115Route.get('/video/random', getRandomVideo);
 
 pan115Route.use('*', requirePermission('admin'));
 
@@ -32,3 +34,5 @@ pan115Route.get('/files/:cid', getFiles);
 pan115Route.get('/file/:pickCode', getFile);
 pan115Route.post('/pic/cache', cacheFileIdInDB);
 pan115Route.delete('/pic', clearPicsHandler);
+pan115Route.post('/video/cache', cacheVideoFileIdInDB);
+pan115Route.delete('/video', clearVideosHandler);

@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { requirePermission } from '../../middleware/auth.js';
 import { success } from '../../utils/response.js';
 import { formatLocalDate } from '../../utils/time.js';
-import { getPicCount } from '../pan115/repositories/pic.js';
+import { getFileCount } from '../pan115/repositories/files.js';
 import { RANDOM_PIC_ACCESS_METRIC } from '../statistics/metrics.js';
 import { getDailyStatisticsSince } from '../statistics/repository.js';
 
@@ -29,7 +29,7 @@ dashboardRoute.get('/', (c) => {
     success({
       dailyRandomPicAccess,
       randomPicAccessLast7Days: dailyRandomPicAccess.reduce((total, item) => total + item.count, 0),
-      cachedRandomPicCount: getPicCount(),
+      cachedRandomPicCount: getFileCount('PIC'),
     }),
   );
 });

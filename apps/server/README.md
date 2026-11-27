@@ -1,6 +1,6 @@
 ```
 Node Version: 26.13.1
-pnpm Version: 12.18.0
+pnpm Version: 12.23.0
 ```
 
 ```

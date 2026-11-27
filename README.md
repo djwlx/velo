@@ -18,7 +18,7 @@ Node version is pinned in the root `.nvmrc`; pnpm is pinned in `package.json`.
 ```sh
 nvm install
 nvm use
-npm install --global pnpm@12.18.0
+npm install --global pnpm@12.23.0
 ```
 
 ## Development

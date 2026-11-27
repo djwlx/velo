@@ -38,6 +38,8 @@ export const zhCN = {
   fileNotFound: '文件不存在或无权访问',
   noCachedPic: '暂无缓存的图片',
   picCacheRunning: '图片缓存任务正在运行',
+  noCachedVideo: '暂无缓存的视频',
+  videoCacheRunning: '视频缓存任务正在运行',
   cidRequired: 'cid 不能为空',
   cookie115Missing: '未配置 115 Cookie',
   qrLoginSessionLimit: '正在进行扫码授权，请稍后重试',

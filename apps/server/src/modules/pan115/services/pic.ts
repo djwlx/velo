@@ -1,8 +1,6 @@
 import { ErrorCode } from '@velo/shared';
 import type { Handler } from 'hono';
 
-import { isRunning, runExclusive } from '../../../libs/async-lock.js';
-import { rootLogger } from '../../../libs/logger.js';
 import { Pan115Sdk } from '../../../libs/pan115/index.js';
 import { randomInt } from '../../../utils/number.js';
 import { fail, success } from '../../../utils/response.js';
@@ -10,9 +8,9 @@ import { buildContentDisposition, escapeHtml } from '../../../utils/string.js';
 import { formatLocalDate } from '../../../utils/time.js';
 import { RANDOM_PIC_ACCESS_METRIC } from '../../statistics/metrics.js';
 import { incrementDailyStatistic } from '../../statistics/repository.js';
-import { bulkInsertPics, clearAllPics, getPicByIndex, getPicCount } from '../repositories/pic.js';
+import { getFileByIndex, getFileCount } from '../repositories/files.js';
 import type { Pan115Env } from '../types.js';
-import { fetchRecursively } from '../utils.js';
+import { createCacheHandler, createClearHandler } from './cache.js';
 
 const PIC_CACHE_LOCK_KEY = 'pan115-pic-cache';
 
@@ -23,11 +21,11 @@ export const getRandomPic: Handler<Pan115Env> = async (c) => {
   const isModeJson = mode === 'json';
   const isModeHtml = mode === 'html';
   const client115 = new Pan115Sdk(cookie, isModeJson || isModeHtml ? userAgent : '');
-  const count = getPicCount();
+  const count = getFileCount('PIC');
   if (!count) {
     return c.json(fail('noCachedPic', ErrorCode.ResourceNotFound), 404);
   }
-  const pic = getPicByIndex(randomInt(0, count - 1));
+  const pic = getFileByIndex('PIC', randomInt(0, count - 1));
   if (!pic) {
     return c.json(fail('noCachedPic', ErrorCode.ResourceNotFound), 404);
   }
@@ -67,64 +65,14 @@ export const getRandomPic: Handler<Pan115Env> = async (c) => {
   });
 };
 
-export const cacheFileIdInDB: Handler<Pan115Env> = async (c) => {
-  if (isRunning(PIC_CACHE_LOCK_KEY)) {
-    return c.json(fail('picCacheRunning', ErrorCode.ResourceConflict), 409);
-  }
+export const cacheFileIdInDB = createCacheHandler(
+  'PIC',
+  PIC_CACHE_LOCK_KEY,
+  'picCacheRunning',
+);
 
-  const cookie = c.get('cookie115');
-  const body = await c.req.json<unknown>();
-  if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    return c.json(fail('invalidRequest', ErrorCode.InvalidRequest), 400);
-  }
-  const payload = body as { cid?: unknown; delayMs?: unknown };
-  const rawCids = Array.isArray(payload.cid) ? payload.cid : [payload.cid];
-  const validCids = rawCids.filter(
-    (cid): cid is string => typeof cid === 'string' && /^\d{1,64}$/.test(cid.trim()),
-  );
-  if (rawCids.length === 0 || rawCids.length > 100 || validCids.length !== rawCids.length) {
-    return c.json(fail('invalidRequest', ErrorCode.InvalidRequest), 400);
-  }
-  const cids = [...new Set(validCids.map((cid) => cid.trim()))];
-  const delayMs = payload.delayMs ?? 500;
-  if (typeof delayMs !== 'number' || !Number.isInteger(delayMs) || delayMs < 0 || delayMs > 5000) {
-    return c.json(fail('invalidRequest', ErrorCode.InvalidRequest), 400);
-  }
-  const client115 = new Pan115Sdk(cookie);
-
-  let total = 0;
-  void runExclusive(async () => {
-    try {
-      for (const cid of cids) {
-        await fetchRecursively(
-          client115,
-          cid,
-          ({ parentCid, items }) => {
-            const pics = items.filter((item) => item.class === 'PIC' && item.pc);
-            const rows = pics.map(({ pc, class: fileClass }) => ({
-              pc_code: pc,
-              class: fileClass,
-              cid: parentCid,
-            }));
-            total += rows.length;
-            bulkInsertPics(rows);
-          },
-          { delayMs },
-        );
-      }
-      rootLogger.info({ cidCount: cids.length, total }, 'cache 115 files done');
-    } catch (error) {
-      rootLogger.error({ err: error, cidCount: cids.length }, 'cache 115 files failed');
-    }
-  }, PIC_CACHE_LOCK_KEY);
-
-  return c.json(success({ cids, started: true }));
-};
-
-export const clearPicsHandler: Handler<Pan115Env> = (c) => {
-  if (isRunning(PIC_CACHE_LOCK_KEY)) {
-    return c.json(fail('picCacheRunning', ErrorCode.ResourceConflict), 409);
-  }
-  clearAllPics();
-  return c.json(success({ cleared: true }));
-};
+export const clearPicsHandler = createClearHandler(
+  'PIC',
+  PIC_CACHE_LOCK_KEY,
+  'picCacheRunning',
+);
