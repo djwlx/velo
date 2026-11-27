@@ -1,5 +1,4 @@
-import { VideoPlayer as VideoJsPlayer } from '@videojs/react/video';
-
+import { OrientationVideoPlayer } from '../create-player';
 import { useVideoPoster } from '../hooks/useVideoPoster';
 import type { VideoPlayerProps } from '../types';
 import { PlayerSurface } from './PlayerSurface';
@@ -8,13 +7,18 @@ export function PlayerSession({
   src,
   type,
   poster,
+  title,
   autoPlay,
   autoFullScreen,
 }: VideoPlayerProps) {
   const resolvedPoster = useVideoPoster(src, type, poster);
 
   return (
-    <VideoJsPlayer poster={resolvedPoster}>
+    <OrientationVideoPlayer
+      poster={resolvedPoster}
+      title={title}
+      orientationLockType="any"
+    >
       <PlayerSurface
         src={src}
         type={type}
@@ -22,6 +26,6 @@ export function PlayerSession({
         autoPlay={autoPlay}
         autoFullScreen={autoFullScreen}
       />
-    </VideoJsPlayer>
+    </OrientationVideoPlayer>
   );
 }

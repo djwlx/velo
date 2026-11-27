@@ -1,4 +1,4 @@
-import { ArrowRight, FolderOpen, Image } from 'lucide-react';
+import { ArrowRight, Film, FolderOpen, Image } from 'lucide-react';
 import { Link } from 'wouter';
 
 import {
@@ -14,6 +14,13 @@ const entries = [
     title: '文件管理',
     description: '浏览 115网盘和本地文件',
     icon: FolderOpen,
+    external: false,
+  },
+  {
+    href: '/random-video',
+    title: '随机视频',
+    description: '全屏刷视频，滑动切换',
+    icon: Film,
     external: false,
   },
   {

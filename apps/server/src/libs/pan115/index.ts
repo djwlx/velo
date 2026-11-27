@@ -20,4 +20,5 @@ export type {
   QrTokenResponse,
   RequestOptions,
   UserInfoResponse,
+  VideoInfo,
 } from './types.js';

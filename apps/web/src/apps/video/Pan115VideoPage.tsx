@@ -4,8 +4,7 @@ import { useSearchParams } from 'wouter';
 import { VideoPlayer } from '@/components/video-player';
 import { withAuth } from '@/components/permission';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getFilePreviewUrl } from '@/apps/files/115/utils';
-import { getVideoMimeType } from './utils';
+import { getVideoStreamUrl } from '@/services/pan115';
 
 function Pan115VideoPage() {
   const [searchParams] = useSearchParams();
@@ -26,8 +25,9 @@ function Pan115VideoPage() {
         <CardContent>
           {isValidPickCode ? (
             <VideoPlayer
-              src={getFilePreviewUrl(pickCode)}
-              type={getVideoMimeType(name)}
+              src={getVideoStreamUrl(pickCode)}
+              type="application/vnd.apple.mpegurl"
+              autoPlay
             />
           ) : (
             <p className="text-sm text-muted-foreground">视频地址无效。</p>

@@ -5,8 +5,7 @@ import { useState } from 'react';
 
 type CacheStatus = 'idle' | 'loading' | 'done' | 'error';
 
-const LABELS: Record<CacheStatus, string> = {
-  idle: '缓存图片',
+const STATUS_LABELS: Record<Exclude<CacheStatus, 'idle'>, string> = {
   loading: '提交中',
   done: '已开始',
   error: '重试',
@@ -14,9 +13,15 @@ const LABELS: Record<CacheStatus, string> = {
 
 export interface CacheButtonProps {
   cids: string[];
+  label?: string;
+  cache?: (cids: string[]) => Promise<unknown>;
 }
 
-export function CacheButton({ cids }: CacheButtonProps) {
+export function CacheButton({
+  cids,
+  label = '缓存图片',
+  cache = cachePics,
+}: CacheButtonProps) {
   const [status, setStatus] = useState<CacheStatus>('idle');
 
   const handleClick = async () => {
@@ -24,7 +29,7 @@ export function CacheButton({ cids }: CacheButtonProps) {
 
     setStatus('loading');
     try {
-      await cachePics(cids);
+      await cache(cids);
       setStatus('done');
     } catch {
       setStatus('error');
@@ -43,7 +48,7 @@ export function CacheButton({ cids }: CacheButtonProps) {
       ) : (
         <Database data-icon="inline-start" />
       )}
-      {LABELS[status]}
+      {status === 'idle' ? label : STATUS_LABELS[status]}
     </Button>
   );
 }

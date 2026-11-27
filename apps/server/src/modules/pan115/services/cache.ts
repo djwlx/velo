@@ -57,7 +57,10 @@ export function createCacheHandler(
         }
         rootLogger.info({ fileClass, cidCount: cids.length, total }, 'cache 115 files done');
       } catch (error) {
-        rootLogger.error({ err: error, fileClass, cidCount: cids.length }, 'cache 115 files failed');
+        rootLogger.error(
+          { err: error, fileClass, cidCount: cids.length },
+          'cache 115 files failed',
+        );
       }
     }, lockKey);
 

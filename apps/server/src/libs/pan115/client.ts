@@ -14,9 +14,11 @@ import type {
   FileResponse,
   QrLoginToken,
   RequestOptions,
+  VideoInfo,
 } from './types.js';
 
 const FILE_LIST_URL = 'https://webapi.115.com/files';
+const VIDEO_URL = 'https://webapi.115.com/files/video';
 const DOWNLOAD_URL = 'https://proapi.115.com/app/chrome/downurl';
 const QR_TOKEN_URL = 'https://qrcodeapi.115.com/api/1.0/web/1.0/token/';
 const QR_STATUS_URL = 'https://qrcodeapi.115.com/get/status/';
@@ -201,6 +203,33 @@ export class Pan115Sdk {
       { withCookie: true },
     );
     return (await response.json()) as FileListResponse;
+  }
+
+  async getVideo(pc: string): Promise<VideoInfo> {
+    const url = new URL(VIDEO_URL);
+    url.searchParams.set('pickcode', pc);
+    const response = await this.request(
+      url.toString(),
+      { method: 'GET' },
+      { withCookie: true, timeoutMs: 10_000 },
+    );
+    const raw = (await response.json()) as Partial<VideoInfo> & {
+      state?: boolean | number;
+      error?: string;
+    };
+    if (!raw.state || typeof raw.video_url !== 'string' || !raw.video_url) {
+      throw new Error(`115 returned no video stream (error=${raw.error ?? 'unknown'})`);
+    }
+
+    return {
+      file_name: typeof raw.file_name === 'string' ? raw.file_name : '',
+      file_size: typeof raw.file_size === 'string' ? raw.file_size : '0',
+      video_url: raw.video_url,
+      ...(typeof raw.video_url_demo === 'string' ? { video_url_demo: raw.video_url_demo } : {}),
+      ...(raw.definition_list && typeof raw.definition_list === 'object'
+        ? { definition_list: raw.definition_list as Record<string, string> }
+        : {}),
+    };
   }
 
   async getFile(pc: string): Promise<FileInfo> {

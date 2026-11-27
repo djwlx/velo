@@ -65,14 +65,6 @@ export const getRandomPic: Handler<Pan115Env> = async (c) => {
   });
 };
 
-export const cacheFileIdInDB = createCacheHandler(
-  'PIC',
-  PIC_CACHE_LOCK_KEY,
-  'picCacheRunning',
-);
+export const cacheFileIdInDB = createCacheHandler('PIC', PIC_CACHE_LOCK_KEY, 'picCacheRunning');
 
-export const clearPicsHandler = createClearHandler(
-  'PIC',
-  PIC_CACHE_LOCK_KEY,
-  'picCacheRunning',
-);
+export const clearPicsHandler = createClearHandler('PIC', PIC_CACHE_LOCK_KEY, 'picCacheRunning');

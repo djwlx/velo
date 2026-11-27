@@ -1,4 +1,4 @@
-import { API_BASE_URL, request } from '@/utils/request';
+import { ACCESS_TOKEN_KEY, API_BASE_URL, request } from '@/utils/request';
 import type { GetPan115FilesParams, Pan115FileList } from './types';
 
 const DEFAULT_PAGE = 1;
@@ -51,6 +51,53 @@ export const getFileDownloadUrl = (pickCode: string): string => {
   return `${API_BASE_URL}/115/file/${encodeURIComponent(normalizedPickCode)}`;
 };
 
+export type RandomVideoInfo = {
+  pickCode: string;
+  name: string;
+  mime: string;
+  sizeBytes: number | string;
+  url: string;
+};
+
+const MAX_RANDOM_EXCLUDE_CODES = 500;
+
+export const getRandomVideo = async (
+  excludeCodes: string[] = []
+): Promise<RandomVideoInfo> => {
+  const params = new URLSearchParams({ mode: 'json' });
+  for (const code of excludeCodes.slice(-MAX_RANDOM_EXCLUDE_CODES)) {
+    params.append('exclude', code);
+  }
+  const response = await request<RandomVideoInfo>(
+    `/115/video/random?${params.toString()}`
+  );
+  return response.data;
+};
+
+export const getRandomVideoStreamUrl = (pickCode: string): string => {
+  const normalizedPickCode = pickCode.trim();
+  if (!normalizedPickCode) {
+    throw new TypeError('pickCode is required');
+  }
+
+  return `${API_BASE_URL}/115/video/random?pickCode=${encodeURIComponent(normalizedPickCode)}`;
+};
+
+export const getVideoStreamUrl = (pickCode: string): string => {
+  const normalizedPickCode = pickCode.trim();
+  if (!/^[A-Za-z0-9_-]{1,128}$/.test(normalizedPickCode)) {
+    throw new TypeError('Invalid pickCode');
+  }
+
+  const url = new URL(
+    `${API_BASE_URL}/115/video/stream/${encodeURIComponent(normalizedPickCode)}`,
+    window.location.origin
+  );
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  if (token) url.searchParams.set('token', token);
+  return url.toString();
+};
+
 export const get115AccountStatus = () =>
   request<{
     bound: boolean;
@@ -72,13 +119,14 @@ export const poll115QrLogin = (sessionId: string) =>
 export const remove115Account = () =>
   request<{ bound: false }>('/115/account', { method: 'DELETE' });
 
-export const cachePics = (cids: string[]) => {
+const normalizeCacheCids = (cids: string[]): string[] => {
   if (!Array.isArray(cids)) {
     throw new TypeError('cids must be an array');
   }
   if (cids.some((cid) => typeof cid !== 'string')) {
     throw new TypeError('cids must contain only strings');
   }
+
   const normalizedCids = [...new Set(cids.map((cid) => cid.trim()))];
   if (
     normalizedCids.length === 0 ||
@@ -88,12 +136,21 @@ export const cachePics = (cids: string[]) => {
     throw new TypeError('cids must contain 1 to 100 numeric ids');
   }
 
-  return request<{ cids: string[]; started: boolean }>('/115/pic/cache', {
+  return normalizedCids;
+};
+
+const postCacheRequest = (path: string, cids: string[]) =>
+  request<{ cids: string[]; started: boolean }>(path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cid: normalizedCids }),
+    body: JSON.stringify({ cid: normalizeCacheCids(cids) }),
   });
-};
+
+export const cachePics = (cids: string[]) =>
+  postCacheRequest('/115/pic/cache', cids);
+
+export const cacheVideos = (cids: string[]) =>
+  postCacheRequest('/115/video/cache', cids);
 
 export type {
   GetPan115FilesParams,

@@ -193,3 +193,40 @@
   ) {
   transform: translateY(-150%);
 }
+
+/* The random feed fills the viewport but keeps the standard video controls. */
+.random-video-player .video-skin {
+  aspect-ratio: auto;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* Align the built-in title row with the back button and let Video.js show /
+   hide it together with the rest of the controls. */
+.random-video-player .media-title {
+  box-sizing: border-box;
+  display: block;
+  height: 56px;
+  padding: 16px 16px 0 64px;
+  overflow: hidden;
+  line-height: 40px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Touch layouts keep room on the right for the fullscreen control. */
+@media (pointer: coarse) {
+  .random-video-player .media-title {
+    padding-right: 64px;
+  }
+}
+
+/* Native fullscreen on mobile already renders the video name in its top bar.
+   Hide the in-player title there so it is not duplicated. */
+@media (pointer: coarse) and (orientation: landscape) {
+  .random-video-player:fullscreen .media-title,
+  .random-video-player:has(:fullscreen) .media-title {
+    display: none;
+  }
+}

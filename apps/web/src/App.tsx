@@ -16,11 +16,26 @@ const Setting = lazy(() => import('./apps/setting'));
 const RoleManagement = lazy(() => import('./apps/setting/roles'));
 const AccountConfig = lazy(() => import('./apps/setting/accounts'));
 const AdminDashboard = lazy(() => import('./apps/setting/dashboard'));
+const RandomVideo = lazy(() => import('./apps/random-video'));
 const UserInfo = lazy(() => import('./apps/setting/user'));
 const UserManagement = lazy(() => import('./apps/setting/users'));
 
 function App() {
   const [location] = useLocation();
+
+  if (location === '/random-video') {
+    return (
+      <Suspense
+        fallback={
+          <div className="grid h-dvh place-items-center bg-black text-sm text-white">
+            加载中…
+          </div>
+        }
+      >
+        <RandomVideo />
+      </Suspense>
+    );
+  }
 
   return (
     <Layout>

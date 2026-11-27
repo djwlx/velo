@@ -171,6 +171,14 @@ export type FileInfo = {
   mime: string;
 };
 
+export type VideoInfo = {
+  file_name: string;
+  file_size: string;
+  video_url: string;
+  video_url_demo?: string;
+  definition_list?: Record<string, string>;
+};
+
 export const qrTokenResponseSchema = z.object({
   state: z.union([z.boolean(), z.number()]).optional(),
   code: z.number().int(),

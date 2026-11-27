@@ -10,7 +10,7 @@ import {
 } from '@/components/file-list-table';
 import { Card } from '@/components/ui/card';
 import { withAuth } from '@/components/permission';
-import { getFileList } from '@/services/pan115';
+import { cacheVideos, getFileList } from '@/services/pan115';
 import { formatFileSize } from '@/utils/file';
 import { useCallback } from 'react';
 import { useLocation, useSearchParams } from 'wouter';
@@ -145,11 +145,19 @@ function FileList115() {
 
               if (!allFolders) return null;
 
+              const cids = selectedItems.map((item) => item.cid ?? '');
+              const selectionKey = cids.join(',');
+
               return (
-                <CacheButton
-                  key={selectedItems.map((item) => item.cid).join(',')}
-                  cids={selectedItems.map((item) => item.cid ?? '')}
-                />
+                <>
+                  <CacheButton key={`pic-${selectionKey}`} cids={cids} />
+                  <CacheButton
+                    key={`video-${selectionKey}`}
+                    cids={cids}
+                    label="缓存视频"
+                    cache={cacheVideos}
+                  />
+                </>
               );
             },
           }}

@@ -1,4 +1,4 @@
-import { count, eq, sql } from 'drizzle-orm';
+import { and, count, eq, notInArray, sql } from 'drizzle-orm';
 
 import { db } from '../../../libs/db/index.js';
 import { files115 } from '../schema.js';
@@ -20,6 +20,42 @@ export function getFileByIndex(fileClass: string, index: number): Cached115File 
     .select()
     .from(files115)
     .where(eq(files115.class, fileClass))
+    .limit(1)
+    .offset(index)
+    .get();
+}
+
+export function getFileByPickCode(fileClass: string, pcCode: string): Cached115File | undefined {
+  return db
+    .select()
+    .from(files115)
+    .where(and(eq(files115.class, fileClass), eq(files115.pc_code, pcCode)))
+    .get();
+}
+
+const availableWhere = (fileClass: string, excludeCodes: string[]) =>
+  excludeCodes.length
+    ? and(eq(files115.class, fileClass), notInArray(files115.pc_code, excludeCodes))
+    : eq(files115.class, fileClass);
+
+export function getAvailableFileCount(fileClass: string, excludeCodes: string[]): number {
+  const row = db
+    .select({ value: count() })
+    .from(files115)
+    .where(availableWhere(fileClass, excludeCodes))
+    .get();
+  return row?.value ?? 0;
+}
+
+export function getAvailableFileByIndex(
+  fileClass: string,
+  index: number,
+  excludeCodes: string[],
+): Cached115File | undefined {
+  return db
+    .select()
+    .from(files115)
+    .where(availableWhere(fileClass, excludeCodes))
     .limit(1)
     .offset(index)
     .get();
